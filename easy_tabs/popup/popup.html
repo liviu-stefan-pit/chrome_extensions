@@ -18,10 +18,9 @@
   </div>
 
   <div class="container-fluid">
-    <!-- NOU: Bara de căutare -->
     <div class="search-container">
       <i class="bi bi-search search-icon"></i>
-      <input type="text" id="searchInput" class="search-input" placeholder="Caută după titlu sau URL...">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search by title or URL...">
     </div>
 
     <div class="stats-row">
@@ -50,6 +49,10 @@
     </div>
 
     <div class="action-buttons">
+      <!-- NEW: Button to close duplicates -->
+      <button id="closeDuplicates" class="btn-full btn-warning-gradient">
+        <i class="bi bi-layers-half me-2"></i>Close Duplicates
+      </button>
       <button id="closeAll" class="btn-full btn-danger-gradient">
         <i class="bi bi-x-circle me-2"></i>Close All
       </button>
@@ -59,7 +62,6 @@
     </div>
   </div>
 
-  <!-- NOU: Container pentru previzualizare tab -->
   <div id="tab-preview" class="tab-preview" style="display: none;"></div>
 
   <script src="popup.js"></script>
