@@ -18,13 +18,16 @@
 }
 
 body {
-  width: 380px;
-  min-height: 500px;
+  width: 100%;
+  min-width: 300px;
+  max-width: 100%;
+  min-height: 100vh;
   background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
   color: var(--text-primary);
+  overflow-x: hidden;
 }
 
 .header {
@@ -337,7 +340,7 @@ body {
 .tab-preview {
   position: fixed;
   z-index: 1000;
-  width: 300px;
+  width: min(300px, calc(100vw - 40px));
   background-color: var(--surface-light);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
