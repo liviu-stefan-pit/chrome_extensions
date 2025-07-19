@@ -18,6 +18,12 @@
   </div>
 
   <div class="container-fluid">
+    <!-- NOU: Bara de căutare -->
+    <div class="search-container">
+      <i class="bi bi-search search-icon"></i>
+      <input type="text" id="searchInput" class="search-input" placeholder="Caută după titlu sau URL...">
+    </div>
+
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-value" id="totalTabs">0</div>
@@ -39,8 +45,8 @@
       <div class="empty-icon">
         <i class="bi bi-inbox"></i>
       </div>
-      <h5>No tabs found</h5>
-      <p>Open some tabs to get started!</p>
+      <h5 id="emptyStateTitle">No tabs found</h5>
+      <p id="emptyStateMessage">Open some tabs to get started!</p>
     </div>
 
     <div class="action-buttons">
@@ -52,6 +58,9 @@
       </button>
     </div>
   </div>
+
+  <!-- NOU: Container pentru previzualizare tab -->
+  <div id="tab-preview" class="tab-preview" style="display: none;"></div>
 
   <script src="popup.js"></script>
 </body>

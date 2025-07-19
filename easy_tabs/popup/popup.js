@@ -3,7 +3,7 @@
  *
  * Script principal pentru popup-ul extensiei.
  * Acest script gestionează preluarea, gruparea și afișarea tab-urilor deschise,
- * permițând utilizatorului să le organizeze, grupeze sau închidă.
+ * permițând utilizatorului să le caute, organizeze, grupeze sau închidă.
  */
 
 // --- CONSTANTE ---
@@ -15,6 +15,7 @@ const DEFAULT_FAVICON = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/s
 const state = {
   tabs: [],
   groups: {},
+  searchTerm: '',
 };
 
 // --- Elemente DOM ---
@@ -27,10 +28,14 @@ function cacheDOMElements() {
   dom.groupsContainer = document.getElementById('groups');
   dom.loadingElement = document.getElementById('loading');
   dom.emptyState = document.getElementById('emptyState');
+  dom.emptyStateTitle = document.getElementById('emptyStateTitle');
+  dom.emptyStateMessage = document.getElementById('emptyStateMessage');
   dom.totalTabsElement = document.getElementById('totalTabs');
   dom.totalGroupsElement = document.getElementById('totalGroups');
   dom.closeAllButton = document.getElementById('closeAll');
   dom.refreshButton = document.getElementById('refreshGroups');
+  dom.searchInput = document.getElementById('searchInput');
+  dom.tabPreview = document.getElementById('tab-preview');
 }
 
 /**
@@ -44,17 +49,16 @@ function setViewState(view, errorMessage) {
   dom.groupsContainer.style.display = view === 'content' ? 'block' : 'none';
 
   if (view === 'error') {
-    dom.emptyState.innerHTML = `
-      <div class="empty-icon"><i class="bi bi-exclamation-triangle"></i></div>
-      <h5>Eroare la încărcarea tab-urilor</h5>
-      <p>${errorMessage || 'Te rugăm să încerci să reîmprospătezi extensia.'}</p>
-    `;
+    dom.emptyStateTitle.textContent = 'Eroare la încărcarea tab-urilor';
+    dom.emptyStateMessage.textContent = errorMessage || 'Te rugăm să încerci să reîmprospătezi extensia.';
   } else if (view === 'empty') {
-      dom.emptyState.innerHTML = `
-        <div class="empty-icon"><i class="bi bi-moon-stars"></i></div>
-        <h5>Nu există tab-uri deschise</h5>
-        <p>Deschide câteva tab-uri pentru a începe organizarea.</p>
-      `;
+      if(state.searchTerm) {
+        dom.emptyStateTitle.textContent = 'Niciun rezultat găsit';
+        dom.emptyStateMessage.textContent = `Nu am găsit tab-uri care să conțină "${state.searchTerm}".`;
+      } else {
+        dom.emptyStateTitle.textContent = 'Nu există tab-uri deschise';
+        dom.emptyStateMessage.textContent = 'Deschide câteva tab-uri pentru a începe organizarea.';
+      }
   }
 }
 
@@ -83,10 +87,11 @@ function groupTabsByHostname(tabs) {
 
 /**
  * Actualizează contoarele pentru totalul de tab-uri și grupuri în UI.
+ * @param {number} groupCount - Numărul de grupuri de afișat.
  */
-function updateStats() {
+function updateStats(groupCount) {
   dom.totalTabsElement.textContent = state.tabs.length;
-  dom.totalGroupsElement.textContent = Object.keys(state.groups).length;
+  dom.totalGroupsElement.textContent = groupCount;
 }
 
 /**
@@ -97,8 +102,8 @@ function updateStats() {
 function createTabElement(tab) {
     const tabItem = document.createElement('div');
     tabItem.className = 'tab-item';
+    tabItem.dataset.tabId = tab.id; // NOU: Adaugă ID-ul tab-ului pentru previzualizare
 
-    // Informații tab (favicon și titlu)
     const tabInfo = document.createElement('div');
     tabInfo.className = 'tab-info';
     
@@ -114,7 +119,6 @@ function createTabElement(tab) {
 
     tabInfo.append(favicon, tabTitle);
 
-    // Acțiuni tab (deschide, fixează, închide)
     const tabActions = document.createElement('div');
     tabActions.className = 'tab-actions';
 
@@ -144,7 +148,6 @@ function createTabElement(tab) {
     return tabItem;
 }
 
-
 /**
  * Creează și returnează un card de grup, inclusiv toate tab-urile sale.
  * @param {string} host - Numele grupului (hostname).
@@ -155,7 +158,6 @@ function createGroupCardElement(host, groupTabs) {
     const groupCard = document.createElement('div');
     groupCard.className = 'group-card';
 
-    // Antet grup
     const groupHeader = document.createElement('div');
     groupHeader.className = 'group-header';
 
@@ -163,7 +165,6 @@ function createGroupCardElement(host, groupTabs) {
     groupTitle.className = 'group-title';
     groupTitle.innerHTML = `<i class="bi bi-globe"></i> ${host} <span class="tab-count">${groupTabs.length}</span>`;
 
-    // Acțiuni grup
     const groupActions = document.createElement('div');
     groupActions.className = 'group-actions';
 
@@ -183,7 +184,6 @@ function createGroupCardElement(host, groupTabs) {
     groupHeader.append(groupTitle, groupActions);
     groupCard.appendChild(groupHeader);
     
-    // Adaugă tab-urile individuale
     groupTabs.forEach(tab => {
         groupCard.appendChild(createTabElement(tab));
     });
@@ -192,26 +192,42 @@ function createGroupCardElement(host, groupTabs) {
 }
 
 /**
- * Randează toate grupurile de tab-uri în containerul principal.
+ * Randează toate grupurile de tab-uri în containerul principal, aplicând filtrul de căutare.
  */
 function render() {
-  dom.groupsContainer.innerHTML = ''; // Curăță conținutul vechi
+  dom.groupsContainer.innerHTML = '';
 
-  if (state.tabs.length === 0) {
+  let groupsToRender = state.groups;
+  
+  // NOU: Filtrare pe baza termenului de căutare
+  if (state.searchTerm) {
+    const filteredGroups = {};
+    for (const host in state.groups) {
+      const matchingTabs = state.groups[host].filter(tab =>
+        (tab.title && tab.title.toLowerCase().includes(state.searchTerm)) ||
+        (tab.url && tab.url.toLowerCase().includes(state.searchTerm))
+      );
+      if (matchingTabs.length > 0) {
+        filteredGroups[host] = matchingTabs;
+      }
+    }
+    groupsToRender = filteredGroups;
+  }
+  
+  const sortedGroups = Object.entries(groupsToRender).sort((a, b) => b[1].length - a[1].length);
+  
+  if (sortedGroups.length === 0) {
     setViewState('empty');
-    updateStats();
+    updateStats(0);
     return;
   }
-
-  // Sortează grupurile după numărul de tab-uri (descrescător)
-  const sortedGroups = Object.entries(state.groups).sort((a, b) => b[1].length - a[1].length);
 
   for (const [host, groupTabs] of sortedGroups) {
     const groupCard = createGroupCardElement(host, groupTabs);
     dom.groupsContainer.appendChild(groupCard);
   }
   
-  updateStats();
+  updateStats(sortedGroups.length);
   setViewState('content');
 }
 
@@ -236,25 +252,20 @@ async function handleActions(event) {
                 await chrome.windows.update(tab.windowId, { focused: true });
                 window.close();
                 break;
-
             case 'close-tab':
                 await chrome.tabs.remove(parseInt(tabId));
-                await initialize(); // Re-inițializează pentru a reflecta schimbarea
+                await initialize();
                 break;
-
             case 'pin-tab':
                 const tabToPin = await chrome.tabs.get(parseInt(tabId));
                 await chrome.tabs.update(parseInt(tabId), { pinned: !tabToPin.pinned });
                 await initialize();
                 break;
-
             case 'group-tabs':
                 const tabsToGroup = state.groups[host].map(t => t.id);
                 const groupId = await chrome.tabs.group({ tabIds: tabsToGroup });
                 const randomColor = GROUP_COLORS[Math.floor(Math.random() * GROUP_COLORS.length)];
                 await chrome.tabGroups.update(groupId, { title: host, color: randomColor });
-                
-                // Feedback vizual
                 button.innerHTML = '<i class="bi bi-check-circle me-1"></i>Grupat!';
                 button.disabled = true;
                 setTimeout(() => {
@@ -262,7 +273,6 @@ async function handleActions(event) {
                     button.disabled = false;
                 }, 2000);
                 break;
-
             case 'close-group':
                 const tabsToClose = state.groups[host];
                 if (confirm(`Ești sigur că vrei să închizi cele ${tabsToClose.length} tab-uri de la ${host}?`)) {
@@ -277,9 +287,7 @@ async function handleActions(event) {
     }
 }
 
-/**
- * Gestionează închiderea tuturor tab-urilor.
- */
+/** Gestionează închiderea tuturor tab-urilor. */
 async function handleCloseAll() {
     if (state.tabs.length === 0) return;
     if (confirm(`Ești sigur că vrei să închizi toate cele ${state.tabs.length} tab-uri? Această acțiune nu poate fi anulată.`)) {
@@ -293,19 +301,49 @@ async function handleCloseAll() {
     }
 }
 
-/**
- * Setează ascultătorii de evenimente pentru elementele statice.
- */
+/** NOU: Gestionează căutarea în timp real. */
+function handleSearch(event) {
+    state.searchTerm = event.target.value.toLowerCase();
+    render();
+}
+
+/** NOU: Gestionează afișarea și ascunderea previzualizării tab-ului. */
+function handleTabHover(event) {
+    const tabItem = event.target.closest('.tab-item');
+    
+    if (event.type === 'mouseover' && tabItem) {
+        const tabId = parseInt(tabItem.dataset.tabId);
+        const tab = state.tabs.find(t => t.id === tabId);
+        if (!tab) return;
+
+        dom.tabPreview.innerHTML = `
+            <img src="${tab.favIconUrl || DEFAULT_FAVICON}" class="preview-favicon" alt="">
+            <div class="preview-text">
+                <div class="preview-title">${tab.title || 'Fără titlu'}</div>
+                <div class="preview-url">${tab.url || ''}</div>
+            </div>
+        `;
+
+        const rect = tabItem.getBoundingClientRect();
+        dom.tabPreview.style.top = `${rect.bottom + 5}px`;
+        dom.tabPreview.style.left = `20px`; // Aliniat cu padding-ul containerului
+        dom.tabPreview.classList.add('visible');
+    } else if (event.type === 'mouseout') {
+        dom.tabPreview.classList.remove('visible');
+    }
+}
+
+/** Setează ascultătorii de evenimente pentru elementele statice. */
 function setupEventListeners() {
     dom.groupsContainer.addEventListener('click', handleActions);
     dom.closeAllButton.addEventListener('click', handleCloseAll);
     dom.refreshButton.addEventListener('click', () => window.location.reload());
+    dom.searchInput.addEventListener('input', handleSearch);
+    dom.groupsContainer.addEventListener('mouseover', handleTabHover);
+    dom.groupsContainer.addEventListener('mouseout', handleTabHover);
 }
 
-/**
- * Funcția principală de inițializare.
- * Preia tab-urile, le grupează și randează interfața.
- */
+/** Funcția principală de inițializare. */
 async function initialize() {
   setViewState('loading');
   try {
