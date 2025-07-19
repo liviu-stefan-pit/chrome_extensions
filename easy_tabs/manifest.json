@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Tab Grouper",
+  "name": "Easy Tabs",
   "version": "1.0",
   "description": "Group open tabs by source (e.g. YouTube, Udemy) in a user-friendly side panel UI.",
   "permissions": ["tabs", "tabGroups", "sidePanel", "storage"],
