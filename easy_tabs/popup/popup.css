@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Easy Tabs</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-  <style>
-    :root {
+:root {
       --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
       --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -256,6 +247,17 @@
       border-color: #4facfe;
     }
 
+    .btn-warning-gradient {
+      background: var(--warning-gradient);
+      color: var(--surface-color);
+    }
+
+    .btn-warning-gradient:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(255, 234, 167, 0.6);
+      border-color: #ffeaa7;
+    }
+
     .btn-danger-gradient {
       background: var(--secondary-gradient);
       color: white;
@@ -360,53 +362,3 @@
     p {
       color: var(--text-secondary);
     }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <h1>
-      <i class="bi bi-collection"></i>
-      Easy Tabs
-    </h1>
-    <div class="subtitle">Organize your browsing experience</div>
-  </div>
-
-  <div class="container-fluid">
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-value" id="totalTabs">0</div>
-        <div class="stat-label">Total Tabs</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="totalGroups">0</div>
-        <div class="stat-label">Groups</div>
-      </div>
-    </div>
-
-    <div id="loading" class="loading">
-      <div class="spinner"></div>
-    </div>
-
-    <div id="groups" style="display: none;"></div>
-
-    <div id="emptyState" class="empty-state" style="display: none;">
-      <div class="empty-icon">
-        <i class="bi bi-inbox"></i>
-      </div>
-      <h5>No tabs found</h5>
-      <p>Open some tabs to get started!</p>
-    </div>
-
-    <div class="action-buttons">
-      <button id="closeAll" class="btn-full btn-danger-gradient">
-        <i class="bi bi-x-circle me-2"></i>Close All
-      </button>
-      <button id="refreshGroups" class="btn-full btn-primary-gradient">
-        <i class="bi bi-arrow-clockwise me-2"></i>Refresh
-      </button>
-    </div>
-  </div>
-
-  <script src="popup.js"></script>
-</body>
-</html>

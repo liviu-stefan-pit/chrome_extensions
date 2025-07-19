@@ -5,7 +5,7 @@
   "description": "Group open tabs by source (e.g. YouTube, Udemy) in a user-friendly popup UI.",
   "permissions": ["tabs", "tabGroups"],
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "images/icon-16.png",
       "48": "images/icon-48.png",
