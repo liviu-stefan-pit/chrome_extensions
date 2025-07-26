@@ -295,6 +295,7 @@ body {
   display: flex;
   flex-direction: column;
   margin-bottom: var(--spacing-xl);
+  min-height: 250px; /* Ensure tabs section has minimum height */
 }
 
 .tab-list {
@@ -386,8 +387,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
-  max-height: 300px; /* Maximum height for groups section */
   overflow-y: auto;
+  padding-right: var(--spacing-xs); /* Add space for scrollbar */
+  flex: 1; /* Allow it to grow within the groups section */
 }
 
 .groups-section {
@@ -395,6 +397,7 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  max-height: 300px; /* Maximum height for entire groups section */
 }
 
 .group-item {
@@ -403,6 +406,8 @@ body {
   border-radius: var(--border-radius-sm);
   overflow: hidden;
   transition: all 0.2s ease;
+  flex-shrink: 0; /* Prevent groups from being compressed */
+  min-height: 44px; /* Ensure minimum height for group headers */
 }
 
 .group-header {

@@ -27,51 +27,57 @@
         <span class="btn-text">Clean Tabs</span>
       </button>
       <button id="refresh-tabs" class="btn btn-action btn-secondary" data-tooltip="Refresh tab list">
-        <span class="btn-icon">�</span>
+        <span class="btn-icon">🔄</span>
         <span class="btn-text">Refresh</span>
       </button>
     </div>
 
-    <!-- Tab List -->
-    <div class="content-section">
-      <div class="section-header">
-        <h2>Active Tabs</h2>
-      </div>
-      <div class="tab-list-container">
-        <ul id="tab-list" class="tab-list"></ul>
-      </div>
-    </div>
-
-    <!-- Save Group Section -->
-    <div class="content-section">
-      <div class="section-header">
-        <h2>Save Tab Group</h2>
-      </div>
-      <div class="save-group-form">
-        <div class="form-group">
-          <input id="group-name" type="text" class="form-input" placeholder="Enter group name..." />
-          <button id="save-group" class="btn btn-action btn-success">
-            <span class="btn-icon">💾</span>
-            <span class="btn-text">Save Selected</span>
-          </button>
+    <!-- Scrollable Content Area -->
+    <div class="scrollable-content">
+      <!-- Tab List -->
+      <div class="tabs-section">
+        <div class="section-header">
+          <h2>Active Tabs</h2>
+        </div>
+        <div class="tab-list-container">
+          <ul id="tab-list" class="tab-list"></ul>
         </div>
       </div>
-    </div>
 
-    <!-- Saved Groups -->
-    <div class="content-section">
-      <div class="section-header">
-        <h2>Saved Groups</h2>
+      <!-- Saved Groups -->
+      <div class="groups-section">
+        <div class="section-header">
+          <h2>Saved Groups</h2>
+        </div>
+        <div id="group-list" class="group-list"></div>
       </div>
-      <div id="group-list" class="group-list"></div>
     </div>
 
-    <!-- Side Panel Button -->
-    <div class="bottom-actions">
-      <button id="open-sidepanel" class="btn btn-action btn-outline" data-tooltip="Open in side panel for better workflow">
-        <span class="btn-icon">📌</span>
-        <span class="btn-text">Open Side Panel</span>
-      </button>
+    <!-- Fixed Bottom Section -->
+    <div class="fixed-bottom-section">
+      <!-- Save Group Section -->
+      <div class="save-group-area">
+        <div class="section-header">
+          <h2>Save Tab Group</h2>
+        </div>
+        <div class="save-group-form">
+          <div class="form-group">
+            <input id="group-name" type="text" class="form-input" placeholder="Enter group name..." />
+            <button id="save-group" class="btn btn-action btn-success">
+              <span class="btn-icon">💾</span>
+              <span class="btn-text">Save Selected</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side Panel Button -->
+      <div class="bottom-actions">
+        <button id="open-sidepanel" class="btn btn-action btn-outline" data-tooltip="Open in side panel for better workflow">
+          <span class="btn-icon">📌</span>
+          <span class="btn-text">Open Side Panel</span>
+        </button>
+      </div>
     </div>
   </div>
 

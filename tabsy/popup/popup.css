@@ -58,8 +58,9 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   width: 380px;
-  min-height: 500px;
-  max-height: 600px;
+  height: 700px;
+  min-height: 600px;
+  max-height: 700px;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -69,8 +70,7 @@ body {
 .main-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  max-height: 600px;
+  height: 700px;
 }
 
 /* ========================================
@@ -238,6 +238,30 @@ body {
   flex-direction: column;
 }
 
+/* Scrollable content area */
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  padding-bottom: 0;
+}
+
+/* Fixed bottom section */
+.fixed-bottom-section {
+  flex-shrink: 0;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  padding: var(--spacing-lg);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.save-group-area {
+  margin-bottom: var(--spacing-md);
+}
+
 .section-header {
   margin-bottom: var(--spacing-md);
 }
@@ -256,8 +280,17 @@ body {
 .tab-list-container {
   flex: 1;
   overflow-y: auto;
-  margin: 0 calc(-1 * var(--spacing-lg));
-  padding: 0 var(--spacing-lg);
+  margin: 0;
+  padding: 0;
+}
+
+.tabs-section {
+  flex: 1; /* Take up remaining space */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--spacing-lg);
+  min-height: 200px; /* Ensure tabs section has minimum height */
 }
 
 .tab-list {
@@ -353,8 +386,17 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
-  max-height: 200px;
   overflow-y: auto;
+  padding-right: var(--spacing-xs); /* Add space for scrollbar */
+  flex: 1; /* Allow it to grow within the groups section */
+}
+
+.groups-section {
+  flex: 0 0 auto; /* Don't grow, don't shrink, auto size based on content */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 200px; /* Maximum height for entire groups section */
 }
 
 .group-item {
@@ -363,6 +405,8 @@ body {
   border-radius: var(--border-radius-sm);
   overflow: hidden;
   transition: all 0.2s ease;
+  flex-shrink: 0; /* Prevent groups from being compressed */
+  min-height: 44px; /* Ensure minimum height for group headers */
 }
 
 .group-header {
@@ -435,9 +479,10 @@ body {
    BOTTOM ACTIONS
    ======================================== */
 .bottom-actions {
-  padding: var(--spacing-lg);
-  background: var(--bg-secondary);
+  background: transparent;
   border-top: 1px solid var(--border-color);
+  padding-top: var(--spacing-md);
+  margin-top: var(--spacing-md);
   flex-shrink: 0;
 }
 
