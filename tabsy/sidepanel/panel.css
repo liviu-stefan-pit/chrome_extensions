@@ -249,6 +249,26 @@ body {
   flex-direction: column;
 }
 
+/* Scrollable content area */
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-xl);
+  padding-bottom: 0;
+}
+
+/* Fixed bottom section */
+.fixed-bottom-section {
+  flex-shrink: 0;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  padding: var(--spacing-xl);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+}
+
 .section-header {
   margin-bottom: var(--spacing-md);
 }
@@ -265,8 +285,16 @@ body {
 .tab-list-container {
   flex: 1;
   overflow-y: auto;
-  margin: 0 calc(-1 * var(--spacing-xl));
-  padding: 0 var(--spacing-xl);
+  margin: 0;
+  padding: 0;
+}
+
+.tabs-section {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--spacing-xl);
 }
 
 .tab-list {
@@ -360,6 +388,13 @@ body {
   gap: var(--spacing-sm);
   flex: 1;
   overflow-y: auto;
+}
+
+.groups-section {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .group-item {

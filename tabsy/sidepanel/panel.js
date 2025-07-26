@@ -34,18 +34,29 @@ document.addEventListener("DOMContentLoaded", async function () {
       </button>
     </div>
 
-    <!-- Tab List -->
-    <div class="content-section">
-      <div class="section-header">
-        <h2>Active Tabs</h2>
+    <!-- Scrollable Content Area -->
+    <div class="scrollable-content">
+      <!-- Tab List -->
+      <div class="tabs-section">
+        <div class="section-header">
+          <h2>Active Tabs</h2>
+        </div>
+        <div class="tab-list-container">
+          <ul id="tab-list" class="tab-list"></ul>
+        </div>
       </div>
-      <div class="tab-list-container">
-        <ul id="tab-list" class="tab-list"></ul>
+
+      <!-- Saved Groups -->
+      <div class="groups-section">
+        <div class="section-header">
+          <h2>Saved Groups</h2>
+        </div>
+        <div id="group-list" class="group-list"></div>
       </div>
     </div>
 
-    <!-- Save Group Section -->
-    <div class="content-section">
+    <!-- Fixed Save Group Section -->
+    <div class="fixed-bottom-section">
       <div class="section-header">
         <h2>Save Tab Group</h2>
       </div>
@@ -58,14 +69,6 @@ document.addEventListener("DOMContentLoaded", async function () {
           </button>
         </div>
       </div>
-    </div>
-
-    <!-- Saved Groups -->
-    <div class="content-section">
-      <div class="section-header">
-        <h2>Saved Groups</h2>
-      </div>
-      <div id="group-list" class="group-list"></div>
     </div>
   `;
 
