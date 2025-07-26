@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Tab Manager Pro",
+  "name": "Tabsy",
   "version": "1.0",
-  "description": "Manage, group, and restore Chrome tabs with a sleek dark UI.",
+  "description": "Manage, group, and restore Chrome tabs.",
   "permissions": ["tabs", "storage", "scripting", "sidePanel"],
   "host_permissions": ["<all_urls>"],
   "background": {
