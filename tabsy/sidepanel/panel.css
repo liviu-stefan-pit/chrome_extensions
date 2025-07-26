@@ -290,7 +290,7 @@ body {
 }
 
 .tabs-section {
-  flex: 1;
+  flex: 1; /* Take up remaining space */
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -386,12 +386,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
-  flex: 1;
+  max-height: 300px; /* Maximum height for groups section */
   overflow-y: auto;
 }
 
 .groups-section {
-  flex: 1;
+  flex: 0 0 auto; /* Don't grow, don't shrink, auto size based on content */
   overflow: hidden;
   display: flex;
   flex-direction: column;
