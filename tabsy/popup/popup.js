@@ -12,8 +12,15 @@ if (!window.hasTabManagerInit) {
     await renderGroups();
 
     document.getElementById("refresh-tabs").onclick = refreshTabList;
-    document.getElementById("delete-duplicates").onclick = TabUtils.removeDuplicates;
-    document.getElementById("delete-empty").onclick = TabUtils.removeEmptyTabs;
+    document.getElementById("clean-tabs").onclick = async () => {
+      try {
+        await TabUtils.cleanTabs();
+        await refreshTabList(); // Refresh the tab list after cleaning
+      } catch (error) {
+        console.error('Error cleaning tabs:', error);
+        alert('Error cleaning tabs: ' + error.message);
+      }
+    };
     document.getElementById("save-group").onclick = saveGroup;
     document.getElementById("open-sidepanel").onclick = async () => {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });

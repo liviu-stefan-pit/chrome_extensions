@@ -6,8 +6,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   root.innerHTML = `
     <div class="container-fluid p-3">
       <div class="d-flex justify-content-between mb-3">
-        <button id="delete-duplicates" class="btn btn-outline-light btn-sm">🗑️ Duplicates</button>
-        <button id="delete-empty" class="btn btn-outline-light btn-sm">🚫 Empty</button>
+        <button id="clean-tabs" class="btn btn-outline-light btn-sm" title="Removes duplicate tabs and empty pages (keeps important browser tabs like extensions)">🧹 Clean Tabs</button>
         <button id="refresh-tabs" class="btn btn-outline-light btn-sm">🔁 Refresh</button>
       </div>
       <ul id="tab-list" class="list-group mb-3"></ul>
@@ -30,8 +29,15 @@ document.addEventListener("DOMContentLoaded", async function () {
   await renderGroups();
 
   document.getElementById("refresh-tabs").onclick = refreshTabList;
-  document.getElementById("delete-duplicates").onclick = TabUtils.removeDuplicates;
-  document.getElementById("delete-empty").onclick = TabUtils.removeEmptyTabs;
+  document.getElementById("clean-tabs").onclick = async () => {
+    try {
+      await TabUtils.cleanTabs();
+      await refreshTabList(); // Refresh the tab list after cleaning
+    } catch (error) {
+      console.error('Error cleaning tabs:', error);
+      alert('Error cleaning tabs: ' + error.message);
+    }
+  };
   document.getElementById("save-group").onclick = saveGroup;
 
   async function refreshTabList() {
