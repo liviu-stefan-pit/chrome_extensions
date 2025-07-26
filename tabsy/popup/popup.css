@@ -1,0 +1,16 @@
+body {
+  font-size: 14px;
+  font-family: system-ui, sans-serif;
+  min-width: 350px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+input.form-control {
+  font-size: 13px;
+}
+
+.list-group-item {
+  font-size: 13px;
+  padding: 6px 10px;
+}

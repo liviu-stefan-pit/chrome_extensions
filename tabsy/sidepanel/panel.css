@@ -1,0 +1,10 @@
+body {
+  font-size: 14px;
+  min-width: 300px;
+  overflow-y: auto;
+}
+
+.list-group-item {
+  font-size: 13px;
+  padding: 6px 10px;
+}
