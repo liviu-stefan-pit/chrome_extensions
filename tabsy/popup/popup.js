@@ -5,6 +5,7 @@ if (!window.hasTabManagerInit) {
   document.addEventListener("DOMContentLoaded", async () => {
     const tabListEl = document.getElementById("tab-list");
     const groupListEl = document.getElementById("group-list");
+    const tabCountEl = document.getElementById("tab-count");
 
     let currentTabs = [];
 
@@ -30,28 +31,30 @@ if (!window.hasTabManagerInit) {
     async function refreshTabList() {
       currentTabs = await chrome.tabs.query({});
       tabListEl.innerHTML = "";
+      
+      // Update tab count
+      tabCountEl.textContent = `${currentTabs.length} tab${currentTabs.length !== 1 ? 's' : ''}`;
 
       currentTabs.forEach(tab => {
         const li = document.createElement("li");
-        li.className = "list-group-item bg-secondary text-light d-flex align-items-center";
+        li.className = "tab-item";
         
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        checkbox.className = "form-check-input me-2";
+        checkbox.className = "tab-checkbox";
         checkbox.setAttribute("data-id", tab.id);
         
         const img = document.createElement("img");
-        img.src = tab.favIconUrl || '';
-        img.width = 16;
-        img.height = 16;
-        img.className = "me-2";
-        img.onerror = function() { this.style.display = 'none'; };
+        img.src = tab.favIconUrl || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline></svg>';
+        img.className = "tab-favicon";
+        img.onerror = function() { 
+          this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline></svg>';
+        };
         
         const span = document.createElement("span");
-        span.className = "text-truncate";
+        span.className = "tab-title";
+        span.textContent = tab.title || 'Untitled';
         span.title = tab.title;
-        span.style.maxWidth = "200px";
-        span.textContent = tab.title;
         
         li.appendChild(checkbox);
         li.appendChild(img);
@@ -86,51 +89,71 @@ if (!window.hasTabManagerInit) {
       groupListEl.innerHTML = "";
 
       groups.forEach((group, index) => {
-        const id = `group-${index}`;
-        const wrapper = document.createElement("div");
-        wrapper.className = "accordion-item bg-dark text-light border-secondary";
-
-        wrapper.innerHTML = `
-          <h2 class="accordion-header" id="heading-${id}">
-            <button class="accordion-button collapsed bg-secondary text-light" type="button" data-group-toggle="${id}">
-              ${group.name}
-            </button>
-          </h2>
-          <div id="collapse-${id}" class="accordion-collapse collapse" style="display: none;">
-            <div class="accordion-body">
-              <ul class="list-group mb-2">
-                ${group.urls.map(url => `<li class="list-group-item list-group-item-dark text-truncate" title="${url}">${url}</li>`).join("")}
-              </ul>
-              <button class="btn btn-sm btn-success me-2" data-action="restore" data-name="${group.name}">🔄 Restore</button>
-              <button class="btn btn-sm btn-warning me-2" data-action="rename" data-name="${group.name}">✏️ Rename</button>
-              <button class="btn btn-sm btn-danger" data-action="delete" data-name="${group.name}">🗑️ Delete</button>
-            </div>
-          </div>
-        `;
-        groupListEl.appendChild(wrapper);
-      });
-
-      groupListEl.querySelectorAll("button[data-action]").forEach(btn => {
-        const name = btn.getAttribute("data-name");
-        const action = btn.getAttribute("data-action");
-        btn.onclick = () => handleGroupAction(action, name);
-      });
-
-      // Handle accordion toggle manually
-      groupListEl.querySelectorAll("button[data-group-toggle]").forEach(btn => {
-        const targetId = btn.getAttribute("data-group-toggle");
-        btn.onclick = () => {
-          const target = document.getElementById(`collapse-${targetId}`);
-          const isHidden = target.style.display === 'none';
-          
-          // Close all other accordions
-          groupListEl.querySelectorAll('.accordion-collapse').forEach(el => {
-            el.style.display = 'none';
-          });
-          
-          // Toggle current accordion
-          target.style.display = isHidden ? 'block' : 'none';
+        const groupItem = document.createElement("div");
+        groupItem.className = "group-item";
+        
+        const groupHeader = document.createElement("div");
+        groupHeader.className = "group-header";
+        
+        const groupTitle = document.createElement("div");
+        groupTitle.className = "group-title";
+        groupTitle.textContent = group.name;
+        
+        const groupToggle = document.createElement("div");
+        groupToggle.className = "group-toggle";
+        groupToggle.textContent = "▼";
+        
+        groupHeader.appendChild(groupTitle);
+        groupHeader.appendChild(groupToggle);
+        
+        const groupContent = document.createElement("div");
+        groupContent.className = "group-content";
+        
+        const groupUrls = document.createElement("ul");
+        groupUrls.className = "group-urls";
+        
+        group.urls.forEach(url => {
+          const li = document.createElement("li");
+          li.className = "group-url";
+          li.textContent = url;
+          li.title = url;
+          groupUrls.appendChild(li);
+        });
+        
+        const groupActions = document.createElement("div");
+        groupActions.className = "group-actions";
+        
+        const restoreBtn = document.createElement("button");
+        restoreBtn.className = "btn btn-success";
+        restoreBtn.innerHTML = '<span class="btn-icon">🔄</span><span class="btn-text">Restore</span>';
+        restoreBtn.onclick = () => handleGroupAction("restore", group.name);
+        
+        const renameBtn = document.createElement("button");
+        renameBtn.className = "btn btn-secondary";
+        renameBtn.innerHTML = '<span class="btn-icon">✏️</span><span class="btn-text">Rename</span>';
+        renameBtn.onclick = () => handleGroupAction("rename", group.name);
+        
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "btn btn-outline";
+        deleteBtn.innerHTML = '<span class="btn-icon">🗑️</span><span class="btn-text">Delete</span>';
+        deleteBtn.onclick = () => handleGroupAction("delete", group.name);
+        
+        groupActions.appendChild(restoreBtn);
+        groupActions.appendChild(renameBtn);
+        groupActions.appendChild(deleteBtn);
+        
+        groupContent.appendChild(groupUrls);
+        groupContent.appendChild(groupActions);
+        
+        groupItem.appendChild(groupHeader);
+        groupItem.appendChild(groupContent);
+        
+        // Toggle functionality
+        groupHeader.onclick = () => {
+          groupItem.classList.toggle('expanded');
         };
+        
+        groupListEl.appendChild(groupItem);
       });
     }
 

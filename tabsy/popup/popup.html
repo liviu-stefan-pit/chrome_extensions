@@ -3,26 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tab Manager</title>
+  <title>Tabsy - Tab Manager</title>
   <link href="../libs/css/bootstrap.min.css" rel="stylesheet" />
   <link href="popup.css" rel="stylesheet" />
 </head>
-<body class="bg-dark text-light">
-  <div class="container-fluid p-3">
-    <h5 class="text-center mb-3">Tab Manager</h5>
-    <div class="d-flex justify-content-between mb-3">
-      <button id="clean-tabs" class="btn btn-outline-light btn-sm" title="Removes duplicate tabs and empty pages (keeps important browser tabs like extensions)">🧹 Clean Tabs</button>
-      <button id="refresh-tabs" class="btn btn-outline-light btn-sm">🔁 Refresh</button>
+<body class="dark-theme">
+  <div class="main-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="app-title">
+          <div class="app-icon">🗂️</div>
+          <h1>Tabsy</h1>
+        </div>
+        <div class="tab-count" id="tab-count">0 tabs</div>
+      </div>
+    </header>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <button id="clean-tabs" class="btn btn-action btn-primary" data-tooltip="Removes duplicate tabs and empty pages (keeps important browser tabs)">
+        <span class="btn-icon">🧹</span>
+        <span class="btn-text">Clean Tabs</span>
+      </button>
+      <button id="refresh-tabs" class="btn btn-action btn-secondary" data-tooltip="Refresh tab list">
+        <span class="btn-icon">�</span>
+        <span class="btn-text">Refresh</span>
+      </button>
     </div>
-    <ul id="tab-list" class="list-group mb-3"></ul>
-    <div class="mb-3">
-      <input id="group-name" class="form-control form-control-sm mb-1" placeholder="Group name" />
-      <button id="save-group" class="btn btn-primary btn-sm w-100">💾 Save Selected Tabs as Group</button>
+
+    <!-- Tab List -->
+    <div class="content-section">
+      <div class="section-header">
+        <h2>Active Tabs</h2>
+      </div>
+      <div class="tab-list-container">
+        <ul id="tab-list" class="tab-list"></ul>
+      </div>
     </div>
-    <h6>Saved Groups</h6>
-    <div id="group-list" class="accordion"></div>
-    <button id="open-sidepanel" class="btn btn-secondary btn-sm w-100 mt-3">➡️ Open Side Panel</button>
+
+    <!-- Save Group Section -->
+    <div class="content-section">
+      <div class="section-header">
+        <h2>Save Tab Group</h2>
+      </div>
+      <div class="save-group-form">
+        <div class="form-group">
+          <input id="group-name" type="text" class="form-input" placeholder="Enter group name..." />
+          <button id="save-group" class="btn btn-action btn-success">
+            <span class="btn-icon">💾</span>
+            <span class="btn-text">Save Selected</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Saved Groups -->
+    <div class="content-section">
+      <div class="section-header">
+        <h2>Saved Groups</h2>
+      </div>
+      <div id="group-list" class="group-list"></div>
+    </div>
+
+    <!-- Side Panel Button -->
+    <div class="bottom-actions">
+      <button id="open-sidepanel" class="btn btn-action btn-outline" data-tooltip="Open in side panel for better workflow">
+        <span class="btn-icon">📌</span>
+        <span class="btn-text">Open Side Panel</span>
+      </button>
+    </div>
   </div>
+
   <script src="../utils/tabUtils.js"></script>
   <script src="../storage/group.js"></script>
   <script src="popup.js"></script>
