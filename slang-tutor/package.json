@@ -1,0 +1,27 @@
+{
+  "name": "slang-tutor",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+
+    "build:css": "tailwindcss -c ./config/tailwind.config.cjs -i ./src/styles/tailwind.css -o ./src/ui/popup.css --minify",
+    "dev:css": "tailwindcss -c ./config/tailwind.config.cjs -i ./src/styles/tailwind.css -o ./src/ui/popup.css --watch",
+
+  "build:ts": "esbuild src/ui/popup.ts --bundle --format=esm --outfile=src/ui/popup.js && esbuild src/ui/tooltip.ts --bundle --format=iife --global-name=SlangTooltip --outfile=src/ui/tooltip.js && esbuild src/bg/service_worker.ts --bundle --format=esm --outfile=src/background/service-worker.js",
+  "dev:ts": "concurrently \"esbuild src/ui/popup.ts --bundle --format=esm --outfile=src/ui/popup.js --watch\" \"esbuild src/ui/tooltip.ts --bundle --format=iife --global-name=SlangTooltip --outfile=src/ui/tooltip.js --watch\" \"esbuild src/bg/service_worker.ts --bundle --format=esm --outfile=src/background/service-worker.js --watch\"",
+
+    "dev": "concurrently \"npm:dev:ts\" \"npm:dev:css\"",
+    "build": "npm run build:ts && npm run build:css"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "concurrently": "^8.2.2",
+    "esbuild": "^0.21.5",
+    "tailwindcss": "^3.4.9",
+    "typescript": "^5.5.4",
+    "vitest": "^1.6.0"
+  }
+}

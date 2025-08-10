@@ -1,0 +1,27 @@
+{
+  "appName": {"message": "Slang Tutor & Translator"},
+  "appDescription": {"message": "Understand and translate slang, idioms, and colloquialisms in context."},
+
+  "appTitle": { "message": "Slang Tutor" },
+  "inputLabel": { "message": "Input" },
+  "outputLabel": { "message": "Output" },
+  "btnTranslate": { "message": "Translate" },
+  "btnClear": { "message": "Clear" },
+  "btnCopy": { "message": "Copy" },
+
+  "modeSlangFormal": { "message": "Slang → Formal" },
+  "modeFormalSlang": { "message": "Formal → Slang" },
+  "decodeEmoji": { "message": "Decode Emoji" },
+  "decodeAcronyms": { "message": "Decode Acronyms" },
+
+  "historyTitle": { "message": "History" },
+  "clearHistory": { "message": "Clear history" },
+  "breakdownTitle": { "message": "Breakdown" },
+
+  "placeholderInput": { "message": "Type slang or formal text..." },
+  
+  "toastCopied": { "message": "Copied" },
+  "toastCopyFailed": { "message": "Copy failed" },
+
+  "sotd": { "message": "Slang of the Day: $1 — $2", "placeholders": { "term": {"content": "$1"}, "meaning": {"content": "$2"} } }
+}
