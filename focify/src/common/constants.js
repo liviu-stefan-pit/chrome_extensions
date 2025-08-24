@@ -1,4 +1,4 @@
-export const VERSION = "0.1.7";
+export const VERSION = "0.2.0";
 export const STORAGE_KEYS = { SETTINGS: "ytf_settings" };
 export const DEFAULT_SETTINGS = {
   version: VERSION,
@@ -9,8 +9,7 @@ export const DEFAULT_SETTINGS = {
     hideHomeGrid: true,
     hideEndscreen: true,
     hideMiniPlayer: true,
-    hideShorts: true,
-    disableAutoplay: true
+  hideShorts: true
   },
   blocklist: [], // list of channel handles (@handle), channel URLs, or keywords
   pomodoro: { enabled: false, focusMin: 25, breakMin: 5, state: "idle", endAt: null }

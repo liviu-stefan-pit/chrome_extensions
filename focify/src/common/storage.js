@@ -1,13 +1,22 @@
-import { STORAGE_KEYS, DEFAULT_SETTINGS } from "./constants.js";
+import { STORAGE_KEYS, DEFAULT_SETTINGS, VERSION } from "./constants.js";
 
 export async function getSettings() {
   const obj = await chrome.storage.sync.get(STORAGE_KEYS.SETTINGS);
-  return { ...DEFAULT_SETTINGS, ...(obj[STORAGE_KEYS.SETTINGS] || {}) };
+  const stored = obj[STORAGE_KEYS.SETTINGS] || {};
+  // Merge with defaults so new keys are introduced
+  const merged = { ...DEFAULT_SETTINGS, ...stored, toggles: { ...DEFAULT_SETTINGS.toggles, ...(stored.toggles||{}) } };
+  // Version migration: if version mismatch, patch stored version only (non-destructive)
+  if (merged.version !== VERSION) {
+    merged.version = VERSION;
+    await chrome.storage.sync.set({ [STORAGE_KEYS.SETTINGS]: merged });
+  }
+  return merged;
 }
 
 export async function setSettings(patch) {
   const current = await getSettings();
   const next = deepMerge(current, patch);
+  next.version = VERSION;
   await chrome.storage.sync.set({ [STORAGE_KEYS.SETTINGS]: next });
   return next;
 }
