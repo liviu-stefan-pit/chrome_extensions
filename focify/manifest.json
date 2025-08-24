@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Focify — YouTube Focus Mode",
-  "version": "0.2.0",
-  "description": "Focify hides YouTube distractions (Shorts, home feed, related sidebar, comments, end-screen). Modes, toggles, and hotkeys.",
+  "version": "0.2.1",
+  "short_name": "Focify",
+  "description": "Focus on YouTube: hide Shorts, home feed, sidebar, comments, end screens, mini-player; simple Off/Work modes.",
   "minimum_chrome_version": "120",
   "icons": {
     "16": "assets/icons/icon16.png",
@@ -17,9 +18,7 @@
   "options_page": "src/options/options.html",
   "permissions": [
     "declarativeNetRequest",
-    "scripting",
-    "storage",
-    "alarms"
+    "storage"
   ],
   "host_permissions": [
     "https://www.youtube.com/*",

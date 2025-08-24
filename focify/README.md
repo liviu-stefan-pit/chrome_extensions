@@ -20,7 +20,6 @@ MV3 Chrome extension to reduce YouTube distractions with smart filtering and foc
 - 💬 **Comments** – Optional comment section hiding
 - 🔚 **End Screens** – Blocks video end screens and overlays
 - 📺 **Mini-player** – Disables floating mini-player
-- ⏯️ **Autoplay** – Prevents automatic video playback
 
 ### **Smart Features**
 - 🔄 **Shorts Redirect** – Converts Shorts links to regular video pages
