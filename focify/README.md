@@ -93,6 +93,8 @@ Focify is **completely private**:
 
 > Disclaimer: Focify is an independent project and is **not affiliated with, endorsed by, or sponsored by YouTube / Google**. All trademarks belong to their respective owners.
 
+Full permission & privacy rationale: see `PRIVACY_POLICY.md`.
+
 ## 📋 Roadmap
 
 ### v0.2 (Next Release)
