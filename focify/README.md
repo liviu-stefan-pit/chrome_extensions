@@ -9,10 +9,9 @@ MV3 Chrome extension to reduce YouTube distractions with smart filtering and foc
 
 ## 🎯 Features
 
-### **Three Focus Modes**
+### **Modes**
 - **Off** – Normal YouTube experience
 - **Work** – Hide distractions while keeping core functionality
-- **Strict** – Maximum focus with feed blocking
 
 ### **Smart Distraction Blocking**
 - 🚫 **Shorts** – Blocks YouTube Shorts pages entirely
@@ -26,7 +25,6 @@ MV3 Chrome extension to reduce YouTube distractions with smart filtering and foc
 ### **Smart Features**
 - 🔄 **Shorts Redirect** – Converts Shorts links to regular video pages
 - ⌨️ **Hotkeys** – `Alt+Shift+F` to cycle modes quickly
-- 📋 **Channel Allowlist** – Configure trusted channels (coming in v0.2)
 - 🍅 **Pomodoro Timer** – Built-in focus timer (coming in v0.2)
 
 ## 🚀 Installation
@@ -98,7 +96,6 @@ Focify is **completely private**:
 
 ### v0.2 (Next Release)
 - 🍅 Pomodoro timer with break reminders
-- 📋 Per-channel allowlist functionality
 - 🎨 Enhanced "search-only" home page
 - ⚙️ Advanced filtering options
 
@@ -124,8 +121,7 @@ Private - All rights reserved.
 
 ## Modes
 - **Off** – no changes
-- **Work** – hides sidebar, endscreen, mini-player, home grid (defaults configurable)
-- **Strict** – applies Work + dynamic block of all `/feed/*` (Subscriptions, Trending, Explore)
+- **Work** – hides selected distractions (configurable)
 
 ## Development Notes
 - Static DNR in `rules/dnr_static.json`
@@ -134,5 +130,5 @@ Private - All rights reserved.
 
 ## Roadmap
 - Pomodoro overlay with `chrome.alarms` backup
-- Per-channel allow rules (bypass Strict for allowlisted channels)
+  
 - Better "search-only" home UI

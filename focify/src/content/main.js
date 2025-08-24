@@ -11,12 +11,12 @@ const CLASSMAP = {
 
 const MODE_CLASS = {
   off: "ytf-mode-off",
-  work: "ytf-mode-work",
-  strict: "ytf-mode-strict"
+  work: "ytf-mode-work"
 };
 
 let currentMode = null;
 let currentToggles = null;
+let currentBlocklist = [];
 let bodyReady = false;
 
 init();
@@ -86,23 +86,27 @@ function apply(settings) {
     for (const k of Object.keys(CLASSMAP)) html.classList.remove(CLASSMAP[k]);
   }
   currentToggles = settings.toggles || {};
+  currentBlocklist = settings.blocklist || [];
   
   // Only apply hiding classes if mode is not "off"
   if (currentMode !== "off") {
     for (const [k, cls] of Object.entries(CLASSMAP)) {
       if (!currentToggles[k]) continue;
-      // In work mode we do NOT hide the entire home grid (browsable homepage)
-      if (currentMode === 'work' && k === 'hideHomeGrid') continue;
+      if (currentMode === 'work' && k === 'hideHomeGrid') continue; // keep grid visible in work
       html.classList.add(cls);
     }
+  } else {
+    // Explicitly ensure all hide classes removed in off mode (defensive)
+    for (const cls of Object.values(CLASSMAP)) html.classList.remove(cls);
   }
 
-  // Placeholder class on <body> – defer until body exists
-  // Placeholder only when home grid actually hidden (exclude work mode)
-  applyBodyPlaceholderClass(Boolean(currentToggles.hideHomeGrid && currentMode !== "off" && currentMode !== 'work'));
+  // No home placeholder now (strict removed)
+  applyBodyPlaceholderClass(false);
   
   // Re-evaluate home overlay when settings change
   evaluateHomeOverlay();
+  applyBlocklistFiltering();
+  restoreHomeLayoutIfNeeded();
 }
 
 function applyBodyPlaceholderClass(enabled) {
@@ -145,82 +149,74 @@ function isSearchResultsPage() {
   return path === '/results' && window.location.search.includes('search_query=');
 }
 
-function evaluateHomeOverlay() {
-  // Always clean up first - remove any existing overlays and strict video mode
-  removeHomeOverlay();
+function evaluateHomeOverlay() { removeHomeOverlay(); }
 
-  // Off mode: normal YouTube
-  if (currentMode === 'off') return;
-
-  // Work mode: just hiding classes, no overlay
-  if (currentMode === 'work') return;
-
-  // Strict mode logic
-  if (currentMode === 'strict') {
-    if (isVideoPage()) {
-      applyStrictVideoMode();
-    } else if (isSearchResultsPage()) {
-      // Allow viewing search results normally (no overlay)
-      // Distraction classes still applied elsewhere
-      return;
-    } else {
-      createStrictModeOverlay();
-    }
+function restoreHomeLayoutIfNeeded() {
+  // Fix case where a stale hide-home-grid class or placeholder remains after refresh in off/work
+  if ((currentMode === 'off' || currentMode === 'work')) {
+    const html = document.documentElement;
+    html.classList.remove(CLASSMAP.hideHomeGrid);
+    if (document.body) document.body.classList.remove('ytf-show-home-placeholder');
   }
 }
 
-function createStrictModeOverlay() {
-  // Remove existing overlay first
-  removeHomeOverlay();
-  
-  if (!document.body) return;
-  
-  const overlay = document.createElement('div');
-  overlay.id = 'focify-home-overlay';
-  overlay.innerHTML = `
-    <div class="focify-home-content focify-strict-mode">
-      <div class="focify-home-icon">🎯</div>
-      <h2>Focify Strict Mode</h2>
-      <p>Search-only interface • Maximum focus</p>
-      <div class="focify-search-container">
-        <input type="text" class="focify-search-input" placeholder="Search for specific content..." />
-        <button class="focify-search-btn">Search</button>
-      </div>
-      <div class="focify-tips">
-        <small>🔒 Strict mode: Only search and video watching allowed</small>
-      </div>
-    </div>
-  `;
-  
-  // Add event listeners
-  const searchInput = overlay.querySelector('.focify-search-input');
-  const searchBtn = overlay.querySelector('.focify-search-btn');
-  
-  const performSearch = () => {
-    const query = searchInput.value.trim();
-    if (query) {
-      window.location.href = `/results?search_query=${encodeURIComponent(query)}`;
-    }
-  };
-  
-  searchBtn.addEventListener('click', performSearch);
-  searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') performSearch();
+function applyBlocklistFiltering() {
+  if (!currentBlocklist.length) return;
+  if (currentMode === 'off') return; // only in work mode
+
+  // Prepare normalized patterns
+  const chHandles = new Set();
+  const chUrls = [];
+  const keywords = [];
+  currentBlocklist.forEach(entry => {
+    if (entry.startsWith('@')) chHandles.add(entry.toLowerCase());
+    else if (/^https?:\/\//i.test(entry)) chUrls.push(entry.toLowerCase());
+    else keywords.push(entry.toLowerCase());
   });
-  
-  // Focus the search input
-  setTimeout(() => searchInput.focus(), 100);
-  
-  document.body.appendChild(overlay);
+
+  const candidates = document.querySelectorAll(
+    'ytd-rich-item-renderer, ytd-video-renderer, ytd-grid-video-renderer, ytd-compact-video-renderer'
+  );
+
+  candidates.forEach(el => {
+    if (el.__focifyHidden) return;
+    const titleEl = el.querySelector('#video-title');
+    const chanEl = el.querySelector('ytd-channel-name a, a.yt-simple-endpoint[href*="/channel/"], a.yt-simple-endpoint[href*="/@"]');
+    const title = (titleEl?.textContent || '').trim().toLowerCase();
+    const channelHref = (chanEl?.getAttribute('href') || '').toLowerCase();
+    const channelText = (chanEl?.textContent || '').trim().toLowerCase();
+
+    let hide = false;
+    // Channel handle match
+    if (!hide) {
+      for (const h of chHandles) {
+        if (channelHref.includes(h) || channelText.includes(h.slice(1))) { hide = true; break; }
+      }
+    }
+    // Channel URL match
+    if (!hide) {
+      for (const u of chUrls) { if (channelHref.startsWith(u)) { hide = true; break; } }
+    }
+    // Keyword in title
+    if (!hide) {
+      for (const kw of keywords) { if (kw && title.includes(kw)) { hide = true; break; } }
+    }
+
+    if (hide) {
+      el.style.display = 'none';
+      el.__focifyHidden = true;
+    }
+  });
+
+  // Observe for dynamically added videos
+  if (!window.__focifyBlocklistObserver) {
+    const obs = new MutationObserver(() => applyBlocklistFiltering());
+    obs.observe(document.documentElement, { childList: true, subtree: true });
+    window.__focifyBlocklistObserver = obs;
+  }
 }
 
-function applyStrictVideoMode() {
-  // In strict mode on video pages, hide everything except video and related sidebar
-  if (!document.body) return;
-  
-  // Add strict video mode class to body for CSS targeting
-  document.body.classList.add('focify-strict-video-mode');
-}
+// Removed strict overlay + video mode helpers
 
 function removeHomeOverlay() {
   const existing = document.getElementById('focify-home-overlay');
@@ -228,10 +224,7 @@ function removeHomeOverlay() {
     existing.remove();
   }
   
-  // Also remove strict video mode class
-  if (document.body) {
-    document.body.classList.remove('focify-strict-video-mode');
-  }
+  // No-op beyond overlay removal
 }
 
 function trySetAutoplayOff() {

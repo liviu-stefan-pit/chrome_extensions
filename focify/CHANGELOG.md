@@ -1,13 +1,19 @@
 # Changelog
 
-## 0.1.6 — Mode Behavior Fixes
+## 0.1.7 — Blocklist & Filtering
+- **Added**: Blocklist (channels / keywords) with hiding in Work & Strict modes
+- **Added**: Options UI for blocklist management
+- **Implemented**: Live mutation observer to catch dynamically loaded videos
+- **Note**: Blocklist ignored in Off mode
+
+## 0.1.6 — Mode Behavior Fixes (Strict now deprecated)
 - **Fixed**: Work mode incorrectly showing empty/overlay style home until a search occurred
 - **Fixed**: Strict mode search box not performing searches reliably
 - **Changed**: Strict mode no longer blocks viewing search results (overlay only on real home/feed pages)
 - **Adjusted**: Work mode no longer hides the home grid even if toggle enabled (browsable focused homepage)
 - **Improved**: Overlay evaluation logic & class application ordering
 
-## 0.1.2 — Hotfix 002 (Home Overlay)
+## 0.1.2 — Hotfix 002 (Home Overlay) (Overlay later removed with Strict mode)
 - **Fixed**: Blank homepage when "Hide Home Grid" is enabled
 - **Added**: Beautiful home overlay with search functionality when home grid is hidden
 - **Enhanced**: Proper YouTube SPA navigation detection (`yt-navigate-finish`)
@@ -25,7 +31,6 @@
 - Static DNR for Shorts/Trending/Explore blocking
 - CSS-first hiding of sidebar/comments/home grid/endscreen/mini-player
 - Popup UI with modes + granular toggles
-- Options page for allowlist & default mode
 - **Custom Focify icons** - Abstract focus design with purple gradient
 - Icon generation tools (Python script + HTML generator)
 - Comprehensive README with features and installation guide

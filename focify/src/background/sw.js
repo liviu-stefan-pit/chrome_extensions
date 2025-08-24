@@ -2,10 +2,7 @@ import { DEFAULT_SETTINGS, STORAGE_KEYS } from "../common/constants.js";
 import { getSettings, setSettings } from "../common/storage.js";
 import { MODES, cycleMode } from "../common/modes.js";
 
-// Dynamic DNR rule IDs (keep stable)
-const DNR_RULE_IDS = {
-  STRICT_BLOCK_FEEDS: 1001
-};
+// No dynamic DNR rules needed after removing strict mode
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === "install") {
@@ -18,14 +15,14 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
   // Ensure DNR matches current mode
   const settings = await getSettings();
-  await applyModeDnr(settings.mode);
+  // No DNR adjustments required
 });
 
 chrome.storage.onChanged.addListener(async (changes, area) => {
   if (area !== "sync") return;
   if (!changes[STORAGE_KEYS.SETTINGS]) return;
   const { newValue: s } = changes[STORAGE_KEYS.SETTINGS];
-  await applyModeDnr(s.mode);
+  // No DNR adjustments required
 });
 
 chrome.commands.onCommand.addListener(async (command) => {
@@ -39,27 +36,4 @@ chrome.commands.onCommand.addListener(async (command) => {
   }
 });
 
-async function applyModeDnr(mode) {
-  // Strict: block any /feed/* (includes subscriptions)
-  const strictRules = [
-    {
-      id: DNR_RULE_IDS.STRICT_BLOCK_FEEDS,
-      priority: 1,
-      action: { type: "block" },
-      condition: {
-        urlFilter: "||youtube.com/feed/",
-        resourceTypes: ["main_frame"]
-      }
-    }
-  ];
-
-  const toAdd = mode === MODES.STRICT ? strictRules : [];
-  const toRemove = mode === MODES.STRICT ? [] : [DNR_RULE_IDS.STRICT_BLOCK_FEEDS];
-
-  try {
-    await chrome.declarativeNetRequest.updateDynamicRules({ addRules: toAdd, removeRuleIds: toRemove });
-  } catch (e) {
-    // Fail soft; DNR may be unavailable in some contexts
-    console.warn("DNR update failed", e);
-  }
-}
+// Removed applyModeDnr

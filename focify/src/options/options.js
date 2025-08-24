@@ -6,11 +6,11 @@ const $ = (sel) => document.querySelector(sel);
   const store = await chrome.storage.sync.get(STORAGE_KEYS.SETTINGS);
   const settings = { ...DEFAULT_SETTINGS, ...(store[STORAGE_KEYS.SETTINGS] || {}) };
 
-  $("#allowlist").value = (settings.allowlist || []).join("\n");
+  $("#blocklist").value = (settings.blocklist || []).join("\n");
   $("#defaultMode").value = settings.mode || "work";
 
   $("#save").addEventListener("click", async () => {
-    const allowlist = $("#allowlist").value
+    const blocklist = $("#blocklist").value
       .split(/\r?\n/)
       .map((s) => s.trim())
       .filter(Boolean);
@@ -18,7 +18,7 @@ const $ = (sel) => document.querySelector(sel);
     const mode = $("#defaultMode").value;
 
     await chrome.storage.sync.set({
-      [STORAGE_KEYS.SETTINGS]: { ...settings, allowlist, mode }
+  [STORAGE_KEYS.SETTINGS]: { ...settings, blocklist, mode }
     });
 
     $("#status").textContent = "Saved";

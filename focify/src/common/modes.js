@@ -1,4 +1,4 @@
-export const MODES = /** @type {const} */ ({ OFF: "off", WORK: "work", STRICT: "strict" });
+export const MODES = /** @type {const} */ ({ OFF: "off", WORK: "work" });
 export function cycleMode(current) {
-  return current === MODES.OFF ? MODES.WORK : current === MODES.WORK ? MODES.STRICT : MODES.OFF;
+  return current === MODES.OFF ? MODES.WORK : MODES.OFF;
 }

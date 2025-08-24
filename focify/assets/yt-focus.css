@@ -33,31 +33,6 @@ body.ytf-show-home-placeholder #contents::before {
   opacity: 0.75; margin: 40px 0;
 }
 
-/* 🎯 Strict Mode - Hide everything except video and sidebar on video pages */
-body.focify-strict-video-mode #masthead,
-body.focify-strict-video-mode #guide,
-body.focify-strict-video-mode ytd-comments,
-body.focify-strict-video-mode #comments,
-body.focify-strict-video-mode .ytp-endscreen-content,
-body.focify-strict-video-mode .ytp-ce-element,
-body.focify-strict-video-mode .ytp-pause-overlay,
-body.focify-strict-video-mode ytd-miniplayer,
-body.focify-strict-video-mode .ytp-miniplayer-ui,
-body.focify-strict-video-mode #footer,
-body.focify-strict-video-mode ytd-masthead,
-body.focify-strict-video-mode #guide-button,
-body.focify-strict-video-mode ytd-guide-renderer {
-  display: none !important;
-}
-
-/* Keep only video player and related sidebar in strict mode */
-body.focify-strict-video-mode #page-manager {
-  padding-top: 0 !important;
-}
-
-body.focify-strict-video-mode #primary {
-  margin-top: 0 !important;
-}
 
 /* 🎯 Focify Home Overlay - Lightweight home replacement */
 #focify-home-overlay {
@@ -86,7 +61,7 @@ body.focify-strict-video-mode #primary {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-/* Different styling for work mode */
+/* Styling for potential overlays (currently unused) */
 .focify-work-mode {
   background: rgba(255, 193, 7, 0.1) !important;
   border: 1px solid rgba(255, 193, 7, 0.3) !important;
@@ -99,18 +74,6 @@ body.focify-strict-video-mode #primary {
   background-clip: text !important;
 }
 
-/* Different styling for strict mode */
-.focify-strict-mode {
-  background: rgba(244, 67, 54, 0.15) !important;
-  border: 1px solid rgba(244, 67, 54, 0.3) !important;
-}
-
-.focify-strict-mode h2 {
-  background: linear-gradient(45deg, #f44336, #e91e63) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-}
 
 .focify-home-icon {
   font-size: 4rem;
