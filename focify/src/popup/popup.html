@@ -7,31 +7,90 @@
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <header>
-      <h1>Focify</h1>
-      <span id="version"></span>
-    </header>
+    <div class="app">
+      <header class="app-header">
+        <div class="title">
+          <h1>Focify</h1>
+          <span class="badge">Focus</span>
+        </div>
+        <span id="version" class="version"></span>
+      </header>
 
-    <section>
-      <label class="mode"><input type="radio" name="mode" value="off" /> Off</label>
-  <label class="mode"><input type="radio" name="mode" value="work" /> Work</label>
-    </section>
+      <main>
+        <section class="block">
+          <h2 class="section-label">Mode</h2>
+          <div class="segmented" role="radiogroup" aria-label="Mode">
+            <label class="segment">
+              <input type="radio" name="mode" value="off" />
+              <span>Off</span>
+            </label>
+            <label class="segment">
+              <input type="radio" name="mode" value="work" />
+              <span>Work</span>
+            </label>
+          </div>
+        </section>
 
-    <section>
-      <h2>Hide</h2>
-      <label><input type="checkbox" id="hideSidebar" /> Related sidebar</label>
-      <label><input type="checkbox" id="hideComments" /> Comments</label>
-      <label><input type="checkbox" id="hideHomeGrid" /> Home grid & shelves</label>
-      <label><input type="checkbox" id="hideEndscreen" /> End-screen & pause overlay</label>
-      <label><input type="checkbox" id="hideMiniPlayer" /> Mini-player</label>
-      <label><input type="checkbox" id="hideShorts" /> Shorts shelves</label>
-      <label><input type="checkbox" id="disableAutoplay" /> Disable autoplay</label>
-    </section>
+        <section class="block tight">
+          <h2 class="section-label">Hide elements</h2>
+          <ul class="toggle-list" role="group" aria-label="Hide elements toggles">
+            <li>
+              <label class="toggle">
+                <input type="checkbox" id="hideSidebar" />
+                <span class="check" aria-hidden="true"></span>
+                <span class="text">Related sidebar</span>
+              </label>
+            </li>
+            <li>
+              <label class="toggle">
+                <input type="checkbox" id="hideComments" />
+                <span class="check" aria-hidden="true"></span>
+                <span class="text">Comments</span>
+              </label>
+            </li>
+            <li>
+              <label class="toggle">
+                <input type="checkbox" id="hideHomeGrid" />
+                <span class="check" aria-hidden="true"></span>
+                <span class="text">Home grid & shelves</span>
+              </label>
+            </li>
+            <li>
+              <label class="toggle">
+                <input type="checkbox" id="hideEndscreen" />
+                <span class="check" aria-hidden="true"></span>
+                <span class="text">End-screen & pause overlay</span>
+              </label>
+            </li>
+            <li>
+              <label class="toggle">
+                <input type="checkbox" id="hideMiniPlayer" />
+                <span class="check" aria-hidden="true"></span>
+                <span class="text">Mini-player</span>
+              </label>
+            </li>
+            <li>
+              <label class="toggle">
+                <input type="checkbox" id="hideShorts" />
+                <span class="check" aria-hidden="true"></span>
+                <span class="text">Shorts shelves</span>
+              </label>
+            </li>
+            <li>
+              <label class="toggle">
+                <input type="checkbox" id="disableAutoplay" />
+                <span class="check" aria-hidden="true"></span>
+                <span class="text">Disable autoplay</span>
+              </label>
+            </li>
+          </ul>
+        </section>
+      </main>
 
-    <footer>
-      <button id="openOptions">Options</button>
-    </footer>
-
+      <footer class="app-footer">
+        <button id="openOptions" class="btn-secondary">Options</button>
+      </footer>
+    </div>
     <script type="module" src="popup.js"></script>
   </body>
 </html>
