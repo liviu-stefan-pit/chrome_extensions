@@ -1,4 +1,5 @@
 import { fetchEnhancedSchedule } from '../api/anilist-only.js';
+import { showAnimeDetail } from './animeDetail.js';
 import { getCurrentDayKey } from '../utils/time.js';
 
 const scheduleListEl = () => document.getElementById('schedule-list');
@@ -113,7 +114,7 @@ function renderSchedule(items) {
     const score = item?.score != null ? item.score.toFixed(1) : null;
     const episodes = item?.episodes;
     
-    return `<a class="otk-card group" href="${url}" target="_blank" rel="noopener noreferrer" role="listitem">
+    return `<a class="otk-card group" href="#" data-id="${item.mal_id || ''}" role="listitem">
       <img src="${img}" alt="${escapeHtml(title)} poster">
       <div class="flex flex-col gap-1 min-w-0">
         <h3 class="otk-card-title text-base">${escapeHtml(title)}</h3>
@@ -125,6 +126,15 @@ function renderSchedule(items) {
       </div>
     </a>`;
   }).join('');
+
+  // Click -> detail modal
+  list.querySelectorAll('.otk-card').forEach(card=>{
+    card.addEventListener('click', e=>{
+      e.preventDefault();
+      const id = parseInt(card.getAttribute('data-id'),10);
+      if(id) showAnimeDetail(id);
+    });
+  });
 }
 
 function handleSortChange() {

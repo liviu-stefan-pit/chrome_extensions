@@ -1,4 +1,5 @@
 import { fetchTrendingNow, fetchPopularSeason } from '../api/anilist-only.js';
+import { showAnimeDetail } from './animeDetail.js';
 
 const trendingContainer = () => document.getElementById('row-trending');
 const popularContainer = () => document.getElementById('row-popular');
@@ -35,7 +36,7 @@ function card(item){
   const img = escapeHtml(item.image||'');
   const title = escapeHtml(item.title||'Untitled');
   const score = item.score!=null? `<span class=\"hp-score\">★ ${item.score.toFixed(1)}</span>`: '';
-  return `<a class="hp-card" href="${item.url}" target="_blank" rel="noopener" title="${title}">
+  return `<a class="hp-card" href="#" data-id="${item.id}" title="${title}">
     <div class="hp-thumb-wrapper"><img loading="lazy" src="${img}" alt="${title}"></div>
     <div class="hp-meta">${title}${score}</div>
   </a>`;
@@ -67,14 +68,24 @@ export async function initHomepage(){
   renderRow(pEl, popular.slice(0,18));
   enableWheelHorizontal('row-trending');
   enableWheelHorizontal('row-popular');
+    // Delegate click for detail
+    [tEl,pEl].forEach(container=>{
+      container.addEventListener('click', e=>{
+        const card = e.target.closest('.hp-card');
+        if(!card) return;
+        e.preventDefault();
+        const id = parseInt(card.getAttribute('data-id'),10);
+        if(id) showAnimeDetail(id);
+      });
+    });
     window.addEventListener('resize', debounce(()=>{
       ['row-trending','row-popular'].forEach(id=>{
         const el = document.getElementById(id);
         if(!el) return; renderRow(el, [...el.querySelectorAll('.hp-card')].map(c=>({
           // reconstruct minimal card object from DOM (skip re-fetch). Not ideal but ok here.
+          id: parseInt(c.getAttribute('data-id'),10),
           title: c.title,
           image: c.querySelector('img')?.getAttribute('src')||'',
-          url: c.getAttribute('href')||'',
           score: null
         })) );
       });
