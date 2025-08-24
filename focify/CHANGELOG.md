@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 — UI Redesign & Autoplay Revamp
+- **Redesigned** popup and options pages with dark green / black minimalist theme (removed Tailwind from popup, custom CSS)
+- **Removed** legacy Strict mode code & overlay remnants (modes now Off / Work only)
+- **Restored** functional Hide Home Grid toggle (applies in Work mode when enabled)
+- **Reworked** Autoplay toggle semantics: allow next video to load but auto-pauses initial playback until user interacts (instead of blocking next video load)
+- **Improved** Blocklist stability & mutation handling (no change required by users)
+- **Refactored** content script for leaner class application (one-frame delay to avoid layout shift)
+- **Cleaned** unused overlay / placeholder CSS & DNR strict logic
+
 ## 0.1.7 — Blocklist & Filtering
 - **Added**: Blocklist (channels / keywords) with hiding in Work & Strict modes
 - **Added**: Options UI for blocklist management
