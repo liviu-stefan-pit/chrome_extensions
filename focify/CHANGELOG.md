@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.6 — Mode Behavior Fixes
+- **Fixed**: Work mode incorrectly showing empty/overlay style home until a search occurred
+- **Fixed**: Strict mode search box not performing searches reliably
+- **Changed**: Strict mode no longer blocks viewing search results (overlay only on real home/feed pages)
+- **Adjusted**: Work mode no longer hides the home grid even if toggle enabled (browsable focused homepage)
+- **Improved**: Overlay evaluation logic & class application ordering
+
 ## 0.1.2 — Hotfix 002 (Home Overlay)
 - **Fixed**: Blank homepage when "Hide Home Grid" is enabled
 - **Added**: Beautiful home overlay with search functionality when home grid is hidden

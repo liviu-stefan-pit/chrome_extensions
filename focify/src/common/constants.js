@@ -1,4 +1,4 @@
-export const VERSION = "0.1.3";
+export const VERSION = "0.1.6";
 export const STORAGE_KEYS = { SETTINGS: "ytf_settings" };
 export const DEFAULT_SETTINGS = {
   version: VERSION,

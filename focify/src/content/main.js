@@ -90,12 +90,16 @@ function apply(settings) {
   // Only apply hiding classes if mode is not "off"
   if (currentMode !== "off") {
     for (const [k, cls] of Object.entries(CLASSMAP)) {
-      if (currentToggles[k]) html.classList.add(cls);
+      if (!currentToggles[k]) continue;
+      // In work mode we do NOT hide the entire home grid (browsable homepage)
+      if (currentMode === 'work' && k === 'hideHomeGrid') continue;
+      html.classList.add(cls);
     }
   }
 
   // Placeholder class on <body> – defer until body exists
-  applyBodyPlaceholderClass(Boolean(currentToggles.hideHomeGrid && currentMode !== "off"));
+  // Placeholder only when home grid actually hidden (exclude work mode)
+  applyBodyPlaceholderClass(Boolean(currentToggles.hideHomeGrid && currentMode !== "off" && currentMode !== 'work'));
   
   // Re-evaluate home overlay when settings change
   evaluateHomeOverlay();
@@ -142,78 +146,27 @@ function isSearchResultsPage() {
 }
 
 function evaluateHomeOverlay() {
-  // Show different overlays based on mode
-  if (currentMode === "off") {
-    // Off mode: no overlay, normal YouTube
-    removeHomeOverlay();
-    return;
-  }
-  
-  if (currentMode === "work" && currentToggles?.hideHomeGrid && isHomePage()) {
-    // Work mode: only show overlay if hiding home grid and on home page
-    createWorkModeOverlay();
-    return;
-  }
-  
-  if (currentMode === "strict") {
-    // Strict mode: always show search interface, everywhere except video pages
+  // Always clean up first - remove any existing overlays and strict video mode
+  removeHomeOverlay();
+
+  // Off mode: normal YouTube
+  if (currentMode === 'off') return;
+
+  // Work mode: just hiding classes, no overlay
+  if (currentMode === 'work') return;
+
+  // Strict mode logic
+  if (currentMode === 'strict') {
     if (isVideoPage()) {
-      removeHomeOverlay();
-      // On video pages in strict mode, hide everything except video and sidebar
       applyStrictVideoMode();
+    } else if (isSearchResultsPage()) {
+      // Allow viewing search results normally (no overlay)
+      // Distraction classes still applied elsewhere
+      return;
     } else {
       createStrictModeOverlay();
     }
-    return;
   }
-  
-  // Default: remove overlay
-  removeHomeOverlay();
-}
-
-function createWorkModeOverlay() {
-  // Remove existing overlay first
-  removeHomeOverlay();
-  
-  if (!document.body) return;
-  
-  const overlay = document.createElement('div');
-  overlay.id = 'focify-home-overlay';
-  overlay.innerHTML = `
-    <div class="focify-home-content focify-work-mode">
-      <div class="focify-home-icon">💼</div>
-      <h2>Work Mode Active</h2>
-      <p>Distractions hidden • Search to find specific content</p>
-      <div class="focify-search-container">
-        <input type="text" class="focify-search-input" placeholder="Search YouTube..." />
-        <button class="focify-search-btn">Search</button>
-      </div>
-      <div class="focify-tips">
-        <small>💡 Tip: Use <kbd>Alt+Shift+F</kbd> to cycle focus modes</small>
-      </div>
-    </div>
-  `;
-  
-  // Add event listeners
-  const searchInput = overlay.querySelector('.focify-search-input');
-  const searchBtn = overlay.querySelector('.focify-search-btn');
-  
-  const performSearch = () => {
-    const query = searchInput.value.trim();
-    if (query) {
-      window.location.href = `/results?search_query=${encodeURIComponent(query)}`;
-    }
-  };
-  
-  searchBtn.addEventListener('click', performSearch);
-  searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') performSearch();
-  });
-  
-  // Focus the search input
-  setTimeout(() => searchInput.focus(), 100);
-  
-  document.body.appendChild(overlay);
 }
 
 function createStrictModeOverlay() {
