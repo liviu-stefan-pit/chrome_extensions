@@ -21,6 +21,9 @@ out/
 *.crx
 *.pem
 
+#folders
+/chrome-extensions-samples
+
 # Chrome Extension specific files
 # Private key files (keep these secure and never commit)
 *.pem
