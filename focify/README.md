@@ -91,6 +91,8 @@ Focify is **completely private**:
 - ✅ Settings stored locally in Chrome sync
 - ✅ Open source and auditable
 
+> Disclaimer: Focify is an independent project and is **not affiliated with, endorsed by, or sponsored by YouTube / Google**. All trademarks belong to their respective owners.
+
 ## 📋 Roadmap
 
 ### v0.2 (Next Release)

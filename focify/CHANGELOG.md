@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 — Pre-Publish Polish
+- **Removed** autoplay feature completely (checkbox, logic, docs)
+- **Trimmed** permissions (dropped scripting & alarms)
+- **Added** manifest short_name & refined description
+- **Synced** internal VERSION constant with manifest
+
 ## 0.2.0 — UI Redesign & Cleanup
 - **Redesigned** popup and options pages with dark green / black minimalist theme (removed Tailwind from popup, custom CSS)
 - **Removed** legacy Strict mode code & overlay remnants (modes now Off / Work only)
