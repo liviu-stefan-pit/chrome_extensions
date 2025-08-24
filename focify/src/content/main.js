@@ -27,7 +27,6 @@ async function init() {
   else {
     const onBody = () => { 
       bodyReady = true; 
-      applyBodyPlaceholderClass(Boolean(currentToggles?.hideHomeGrid));
       evaluateHomeOverlay();
     };
     // DOMContentLoaded is sufficient; RAF loop is a fallback for SPA-y loads
@@ -88,20 +87,17 @@ function apply(settings) {
   currentToggles = settings.toggles || {};
   currentBlocklist = settings.blocklist || [];
   
-  // Only apply hiding classes if mode is not "off"
-  if (currentMode !== "off") {
-    for (const [k, cls] of Object.entries(CLASSMAP)) {
-      if (!currentToggles[k]) continue;
-      if (currentMode === 'work' && k === 'hideHomeGrid') continue; // keep grid visible in work
-      html.classList.add(cls);
-    }
-  } else {
-    // Explicitly ensure all hide classes removed in off mode (defensive)
-    for (const cls of Object.values(CLASSMAP)) html.classList.remove(cls);
+  // Only apply hiding classes if mode is not off, but delay one animation frame to let YouTube layout first row.
+  for (const cls of Object.values(CLASSMAP)) html.classList.remove(cls); // reset first
+  if (currentMode !== 'off') {
+    requestAnimationFrame(() => {
+      for (const [k, cls] of Object.entries(CLASSMAP)) {
+        if (!currentToggles[k]) continue;
+        if (currentMode === 'work' && k === 'hideHomeGrid') continue; // keep grid visible in work
+        html.classList.add(cls);
+      }
+    });
   }
-
-  // No home placeholder now (strict removed)
-  applyBodyPlaceholderClass(false);
   
   // Re-evaluate home overlay when settings change
   evaluateHomeOverlay();
@@ -109,12 +105,7 @@ function apply(settings) {
   restoreHomeLayoutIfNeeded();
 }
 
-function applyBodyPlaceholderClass(enabled) {
-  if (!bodyReady || !document.body) return; // will be applied when body becomes ready
-  const b = document.body;
-  if (enabled) b.classList.add("ytf-show-home-placeholder");
-  else b.classList.remove("ytf-show-home-placeholder");
-}
+// Placeholder removed
 
 function waitForBody(cb) {
   if (document.body) { cb(); return; }
@@ -152,11 +143,8 @@ function isSearchResultsPage() {
 function evaluateHomeOverlay() { removeHomeOverlay(); }
 
 function restoreHomeLayoutIfNeeded() {
-  // Fix case where a stale hide-home-grid class or placeholder remains after refresh in off/work
   if ((currentMode === 'off' || currentMode === 'work')) {
-    const html = document.documentElement;
-    html.classList.remove(CLASSMAP.hideHomeGrid);
-    if (document.body) document.body.classList.remove('ytf-show-home-placeholder');
+    document.documentElement.classList.remove(CLASSMAP.hideHomeGrid);
   }
 }
 
@@ -218,14 +206,7 @@ function applyBlocklistFiltering() {
 
 // Removed strict overlay + video mode helpers
 
-function removeHomeOverlay() {
-  const existing = document.getElementById('focify-home-overlay');
-  if (existing) {
-    existing.remove();
-  }
-  
-  // No-op beyond overlay removal
-}
+function removeHomeOverlay() { /* overlay removed */ }
 
 function trySetAutoplayOff() {
   try {
