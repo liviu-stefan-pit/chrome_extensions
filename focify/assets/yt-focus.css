@@ -1,0 +1,201 @@
+/* Root classes (toggled by content script) */
+html.ytf--hide-sidebar #secondary,
+html.ytf--hide-sidebar ytd-watch-next-secondary-results-renderer,
+html.ytf--hide-sidebar #related { display: none !important; }
+
+html.ytf--hide-comments ytd-comments,
+html.ytf--hide-comments #comments { display: none !important; }
+
+/* Home rich grid and Shorts shelves on browse pages */
+html.ytf--hide-home-grid ytd-rich-grid-renderer,
+html.ytf--hide-home-grid ytd-two-column-browse-results-renderer,
+html.ytf--hide-home-grid ytd-rich-shelf-renderer,
+html.ytf--hide-home-grid ytd-reel-shelf-renderer { display: none !important; }
+
+/* Endscreen + pause overlays */
+html.ytf--hide-endscreen .ytp-endscreen-content,
+html.ytf--hide-endscreen .ytp-ce-element,
+html.ytf--hide-endscreen .ytp-pause-overlay { display: none !important; }
+
+/* Mini-player */
+html.ytf--hide-miniplayer ytd-miniplayer,
+html.ytf--hide-miniplayer .ytp-miniplayer-ui { display: none !important; }
+
+/* Reels/Shorts shelves across site */
+html.ytf--hide-shorts ytd-reel-shelf-renderer,
+html.ytf--hide-shorts ytd-rich-shelf-renderer[is-shorts] { display: none !important; }
+
+/* ✅ Show a minimal centered placeholder when home grid is hidden */
+body.ytf-show-home-placeholder #contents::before {
+  content: "Focify: Focus mode is on — search to watch";
+  display: block; text-align: center;
+  font: 500 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  opacity: 0.75; margin: 40px 0;
+}
+
+/* 🎯 Strict Mode - Hide everything except video and sidebar on video pages */
+body.focify-strict-video-mode #masthead,
+body.focify-strict-video-mode #guide,
+body.focify-strict-video-mode ytd-comments,
+body.focify-strict-video-mode #comments,
+body.focify-strict-video-mode .ytp-endscreen-content,
+body.focify-strict-video-mode .ytp-ce-element,
+body.focify-strict-video-mode .ytp-pause-overlay,
+body.focify-strict-video-mode ytd-miniplayer,
+body.focify-strict-video-mode .ytp-miniplayer-ui,
+body.focify-strict-video-mode #footer,
+body.focify-strict-video-mode ytd-masthead,
+body.focify-strict-video-mode #guide-button,
+body.focify-strict-video-mode ytd-guide-renderer {
+  display: none !important;
+}
+
+/* Keep only video player and related sidebar in strict mode */
+body.focify-strict-video-mode #page-manager {
+  padding-top: 0 !important;
+}
+
+body.focify-strict-video-mode #primary {
+  margin-top: 0 !important;
+}
+
+/* 🎯 Focify Home Overlay - Lightweight home replacement */
+#focify-home-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+.focify-home-content {
+  text-align: center;
+  color: white;
+  max-width: 500px;
+  padding: 40px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Different styling for work mode */
+.focify-work-mode {
+  background: rgba(255, 193, 7, 0.1) !important;
+  border: 1px solid rgba(255, 193, 7, 0.3) !important;
+}
+
+.focify-work-mode h2 {
+  background: linear-gradient(45deg, #ffc107, #ff9800) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* Different styling for strict mode */
+.focify-strict-mode {
+  background: rgba(244, 67, 54, 0.15) !important;
+  border: 1px solid rgba(244, 67, 54, 0.3) !important;
+}
+
+.focify-strict-mode h2 {
+  background: linear-gradient(45deg, #f44336, #e91e63) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+.focify-home-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  animation: focifyPulse 2s ease-in-out infinite;
+}
+
+@keyframes focifyPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.focify-home-content h2 {
+  font-size: 2rem;
+  margin: 0 0 10px;
+  font-weight: 600;
+  background: linear-gradient(45deg, #f093fb, #f5576c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.focify-home-content p {
+  font-size: 1.1rem;
+  margin: 0 0 30px;
+  opacity: 0.9;
+}
+
+.focify-search-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.focify-search-input {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: none;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.focify-search-input:focus {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 3px rgba(240, 147, 251, 0.3);
+}
+
+.focify-search-input::placeholder {
+  color: #666;
+}
+
+.focify-search-btn {
+  padding: 12px 24px;
+  background: linear-gradient(45deg, #f093fb, #f5576c);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.focify-search-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
+}
+
+.focify-tips {
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.focify-tips kbd {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+}

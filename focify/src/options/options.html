@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Focify — Options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Focify Options</h1>
+
+      <section>
+        <h2>Allowlist (channels)</h2>
+        <p>One per line. Handles (e.g., <code>@fireship</code>) or full channel URLs.</p>
+        <textarea id="allowlist" rows="8" placeholder="@yourfavchannel&#10;https://www.youtube.com/@another"></textarea>
+      </section>
+
+      <section>
+        <h2>Defaults</h2>
+        <label>Default mode
+          <select id="defaultMode">
+            <option value="off">Off</option>
+            <option value="work">Work</option>
+            <option value="strict">Strict</option>
+          </select>
+        </label>
+      </section>
+
+      <div class="actions">
+        <button id="save">Save</button>
+        <span id="status"></span>
+      </div>
+    </main>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

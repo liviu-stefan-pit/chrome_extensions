@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Focify</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Focify</h1>
+      <span id="version"></span>
+    </header>
+
+    <section>
+      <label class="mode"><input type="radio" name="mode" value="off" /> Off</label>
+      <label class="mode"><input type="radio" name="mode" value="work" /> Work</label>
+      <label class="mode"><input type="radio" name="mode" value="strict" /> Strict</label>
+    </section>
+
+    <section>
+      <h2>Hide</h2>
+      <label><input type="checkbox" id="hideSidebar" /> Related sidebar</label>
+      <label><input type="checkbox" id="hideComments" /> Comments</label>
+      <label><input type="checkbox" id="hideHomeGrid" /> Home grid & shelves</label>
+      <label><input type="checkbox" id="hideEndscreen" /> End-screen & pause overlay</label>
+      <label><input type="checkbox" id="hideMiniPlayer" /> Mini-player</label>
+      <label><input type="checkbox" id="hideShorts" /> Shorts shelves</label>
+      <label><input type="checkbox" id="disableAutoplay" /> Disable autoplay</label>
+    </section>
+
+    <footer>
+      <button id="openOptions">Options</button>
+    </footer>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

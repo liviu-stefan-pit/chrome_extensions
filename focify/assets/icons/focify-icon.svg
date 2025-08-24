@@ -1,0 +1,33 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="focusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main background circle -->
+  <circle cx="64" cy="64" r="56" fill="url(#bgGradient)" stroke="#ffffff" stroke-width="4"/>
+  
+  <!-- Abstract focus symbol - concentric circles representing focus -->
+  <circle cx="64" cy="64" r="32" fill="none" stroke="url(#focusGradient)" stroke-width="3" opacity="0.8"/>
+  <circle cx="64" cy="64" r="20" fill="none" stroke="url(#focusGradient)" stroke-width="2.5" opacity="0.9"/>
+  <circle cx="64" cy="64" r="8" fill="url(#focusGradient)" opacity="1"/>
+  
+  <!-- Abstract rays representing filtering/blocking -->
+  <g transform="translate(64,64)">
+    <line x1="0" y1="-40" x2="0" y2="-48" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="28.28" y1="-28.28" x2="33.94" y2="-33.94" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="40" y1="0" x2="48" y2="0" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="28.28" y1="28.28" x2="33.94" y2="33.94" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="0" y1="40" x2="0" y2="48" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="-28.28" y1="28.28" x2="-33.94" y2="33.94" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="-40" y1="0" x2="-48" y2="0" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="-28.28" y1="-28.28" x2="-33.94" y2="-33.94" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+  </g>
+</svg>

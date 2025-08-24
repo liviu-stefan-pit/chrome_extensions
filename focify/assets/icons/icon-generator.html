@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Focify Icon Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .icon-preview { display: flex; gap: 20px; margin: 20px 0; }
+        .icon-size { text-align: center; }
+        .icon-size h3 { margin: 10px 0 5px 0; }
+        canvas { border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #5a67d8; }
+        .instructions { background: #f0f9ff; padding: 15px; border-radius: 4px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Focify Icon Generator</h1>
+        <p>This tool generates PNG icons from the SVG for your Chrome extension.</p>
+        
+        <div class="instructions">
+            <strong>Instructions:</strong>
+            <ol>
+                <li>Click "Generate Icons" to create all sizes</li>
+                <li>Right-click each canvas and "Save image as..."</li>
+                <li>Save as icon16.png, icon32.png, icon48.png, and icon128.png</li>
+                <li>Replace the files in the assets/icons folder</li>
+            </ol>
+        </div>
+
+        <button onclick="generateIcons()">Generate Icons</button>
+        <button onclick="downloadAll()">Download All (if supported)</button>
+
+        <div class="icon-preview">
+            <div class="icon-size">
+                <h3>16x16</h3>
+                <canvas id="canvas16" width="16" height="16"></canvas>
+            </div>
+            <div class="icon-size">
+                <h3>32x32</h3>
+                <canvas id="canvas32" width="32" height="32"></canvas>
+            </div>
+            <div class="icon-size">
+                <h3>48x48</h3>
+                <canvas id="canvas48" width="48" height="48"></canvas>
+            </div>
+            <div class="icon-size">
+                <h3>128x128</h3>
+                <canvas id="canvas128" width="128" height="128"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const svgContent = `<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="focusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="64" cy="64" r="56" fill="url(#bgGradient)" stroke="#ffffff" stroke-width="4"/>
+  
+  <circle cx="64" cy="64" r="32" fill="none" stroke="url(#focusGradient)" stroke-width="3" opacity="0.8"/>
+  <circle cx="64" cy="64" r="20" fill="none" stroke="url(#focusGradient)" stroke-width="2.5" opacity="0.9"/>
+  <circle cx="64" cy="64" r="8" fill="url(#focusGradient)" opacity="1"/>
+  
+  <g transform="translate(64,64)">
+    <line x1="0" y1="-40" x2="0" y2="-48" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="28.28" y1="-28.28" x2="33.94" y2="-33.94" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="40" y1="0" x2="48" y2="0" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="28.28" y1="28.28" x2="33.94" y2="33.94" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="0" y1="40" x2="0" y2="48" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="-28.28" y1="28.28" x2="-33.94" y2="33.94" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="-40" y1="0" x2="-48" y2="0" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+    <line x1="-28.28" y1="-28.28" x2="-33.94" y2="-33.94" stroke="#ffffff" stroke-width="2" opacity="0.7"/>
+  </g>
+</svg>`;
+
+        function generateIcons() {
+            const sizes = [16, 32, 48, 128];
+            
+            sizes.forEach(size => {
+                const canvas = document.getElementById('canvas' + size);
+                const ctx = canvas.getContext('2d');
+                
+                const img = new Image();
+                const blob = new Blob([svgContent], {type: 'image/svg+xml'});
+                const url = URL.createObjectURL(blob);
+                
+                img.onload = function() {
+                    ctx.clearRect(0, 0, size, size);
+                    ctx.drawImage(img, 0, 0, size, size);
+                    URL.revokeObjectURL(url);
+                };
+                
+                img.src = url;
+            });
+        }
+
+        function downloadCanvas(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function downloadAll() {
+            const sizes = [16, 32, 48, 128];
+            sizes.forEach(size => {
+                const canvas = document.getElementById('canvas' + size);
+                setTimeout(() => {
+                    downloadCanvas(canvas, 'icon' + size + '.png');
+                }, size * 10); // Small delay between downloads
+            });
+        }
+
+        // Generate icons on page load
+        window.onload = generateIcons;
+    </script>
+</body>
+</html>

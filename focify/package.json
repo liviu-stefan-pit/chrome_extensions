@@ -1,0 +1,19 @@
+{
+  "name": "focify-youtube-focus-mode",
+  "version": "0.1.2",
+  "description": "Focify hides YouTube distractions (Shorts, home feed, related sidebar, comments, end-screen). Modes, toggles, and hotkeys.",
+  "private": true,
+  "scripts": {
+    "build": "echo 'No build step needed for MV3 extension'",
+    "lint": "echo 'Add ESLint configuration if needed'"
+  },
+  "keywords": [
+    "youtube",
+    "focus",
+    "productivity",
+    "chrome-extension",
+    "manifest-v3"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
