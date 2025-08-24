@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tabsy - Tab Manager</title>
-  <link href="../libs/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Removed Bootstrap; using custom minimal theme -->
   <link href="popup.css" rel="stylesheet" />
 </head>
 <body class="dark-theme">
-  <div class="main-container">
+  <div class="app" data-theme="forest">
     <!-- Header -->
-    <header class="app-header">
+  <header class="app-header gradient">
       <div class="header-content">
         <div class="app-title">
           <div class="app-icon">🗂️</div>
@@ -21,7 +21,7 @@
     </header>
 
     <!-- Action Bar -->
-    <div class="action-bar">
+  <div class="action-bar">
       <button id="clean-tabs" class="btn btn-action btn-primary" data-tooltip="Removes duplicate tabs and empty pages (keeps important browser tabs)">
         <span class="btn-icon">🧹</span>
         <span class="btn-text">Clean Tabs</span>
@@ -33,7 +33,7 @@
     </div>
 
     <!-- Scrollable Content Area -->
-    <div class="scrollable-content">
+  <div class="scrollable-content">
       <!-- Tab List -->
       <div class="tabs-section">
         <div class="section-header">
@@ -54,7 +54,7 @@
     </div>
 
     <!-- Fixed Bottom Section -->
-    <div class="fixed-bottom-section">
+  <div class="fixed-bottom-section">
       <!-- Save Group Section -->
       <div class="save-group-area">
         <div class="section-header">

@@ -250,9 +250,38 @@ document.addEventListener("DOMContentLoaded", async function () {
       groupItem.appendChild(groupHeader);
       groupItem.appendChild(groupContent);
       
-      // Toggle functionality
+      // Accordion animation (match popup behavior)
+      groupContent.style.maxHeight = '0px';
+      groupContent.style.overflow = 'hidden';
+      groupContent.classList.add('anim-init');
+      groupContent.addEventListener('transitionend', (e) => {
+        if (e.propertyName !== 'max-height') return;
+        if (groupItem.classList.contains('expanded')) {
+          groupContent.style.maxHeight = 'none';
+          groupContent.style.overflow = 'visible';
+        }
+      });
+
       groupHeader.onclick = () => {
-        groupItem.classList.toggle('expanded');
+        const expanding = !groupItem.classList.contains('expanded');
+        if (expanding) {
+          groupContent.style.overflow = 'hidden';
+          groupContent.style.maxHeight = '0px';
+          groupItem.classList.add('expanded');
+          requestAnimationFrame(() => {
+            groupContent.style.maxHeight = groupContent.scrollHeight + 'px';
+          });
+        } else {
+          if (groupContent.style.maxHeight === 'none') {
+            groupContent.style.maxHeight = groupContent.scrollHeight + 'px';
+            void groupContent.offsetHeight; // reflow
+          }
+            groupContent.style.overflow = 'hidden';
+            groupItem.classList.remove('expanded');
+            requestAnimationFrame(() => {
+              groupContent.style.maxHeight = '0px';
+            });
+        }
       };
       
       groupListEl.appendChild(groupItem);
