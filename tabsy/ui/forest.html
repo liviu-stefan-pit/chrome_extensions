@@ -1,0 +1,47 @@
+<!-- Shared Forest UI markup (structure only, populated by JS) -->
+<div class="panel" role="application" aria-label="Tabsy panel">
+  <header class="appbar" aria-live="polite">
+    <div class="brand" aria-label="Brand">
+      <div class="logo" aria-hidden="true"></div>
+      <h1>Tabsy</h1>
+    </div>
+    <div class="counters" aria-label="Counters">
+      <div class="chip" aria-live="polite">Total tabs <strong id="totalTabs">0</strong></div>
+      <div class="chip" aria-live="polite">Selected <strong id="selectedTabs">0</strong></div>
+    </div>
+    <div class="actions">
+      <button id="refresh-tabs" class="btn ghost" title="Refresh" aria-label="Refresh">Refresh</button>
+      <button id="clean-tabs" class="btn primary" title="Clean Tabs" aria-label="Clean Tabs">Clean Tabs</button>
+    </div>
+  </header>
+  <div class="searchbar" role="search">
+    <div class="input" aria-label="Search tabs">
+      <div class="icon" aria-hidden="true"></div>
+      <input id="tab-search" type="search" placeholder="Search tabs…" aria-label="Search input" />
+    </div>
+    <button id="clear-search" class="btn">Clear</button>
+  </div>
+  <section class="section" aria-labelledby="activeTabsHeading">
+    <h2 id="activeTabsHeading">Active tabs</h2>
+    <div class="scroll">
+      <div id="tab-list" class="tabs-grid" role="listbox" aria-label="Active tabs"></div>
+      <div id="tab-list-empty" class="empty" style="display:none">No tabs</div>
+    </div>
+  </section>
+  <section class="section" aria-labelledby="savedGroupsHeading">
+    <h2 id="savedGroupsHeading">Saved groups</h2>
+    <div id="group-list" class="groups" role="list" aria-label="Saved groups"></div>
+    <div id="group-list-empty" class="empty" style="display:none">No saved groups</div>
+  </section>
+  <div aria-hidden="true"></div>
+</div>
+<div class="savebar" role="region" aria-label="Save group">
+  <div class="inner">
+    <div class="field">
+      <label for="group-name">Group name</label>
+      <input id="group-name" type="text" placeholder="e.g., Reading List" />
+    </div>
+    <button id="save-group" class="btn primary" aria-label="Save selected tabs" disabled>Save selected</button>
+  </div>
+</div>
+<div id="toast-container" class="toasts"></div>
