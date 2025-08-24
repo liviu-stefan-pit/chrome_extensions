@@ -10,14 +10,11 @@ export function initAnimeDetail(){
   detailRoot.innerHTML = `
     <div class="ad-overlay hidden" id="ad-overlay" aria-hidden="true">
       <div class="ad-modal" role="dialog" aria-modal="true" aria-labelledby="ad-title">
-        <button class="ad-close" id="ad-close" aria-label="Close details">×</button>
         <div class="ad-content" id="ad-content"></div>
       </div>
     </div>`;
   document.body.appendChild(detailRoot);
   const overlay = document.getElementById('ad-overlay');
-  const closeBtn = document.getElementById('ad-close');
-  closeBtn.addEventListener('click', closeDetail);
   overlay.addEventListener('click', e=>{ if(e.target===overlay) closeDetail(); });
   document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDetail(); });
 }
