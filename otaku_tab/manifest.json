@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Otaku Tab",
+  "description": "A sleek anime-themed new tab dashboard featuring airing schedule, search, and discovery powered by Jikan API.",
+  "version": "0.1.0",
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://api.jikan.moe/v4/*"
+  ]
+}

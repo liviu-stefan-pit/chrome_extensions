@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otaku Tab Icon Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #f5f6fa;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1f2241;
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid #262a52;
+        }
+        h1 {
+            color: #e94560;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .icon-card {
+            background: #262a52;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #333a66;
+        }
+        .icon-card h3 {
+            margin: 0 0 15px 0;
+            color: #e94560;
+        }
+        canvas {
+            border: 2px solid #333a66;
+            border-radius: 8px;
+            background: transparent;
+        }
+        button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #ff5a74;
+        }
+        .instructions {
+            background: #262a52;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid #e94560;
+        }
+        .instructions h3 {
+            color: #e94560;
+            margin-top: 0;
+        }
+        .instructions ol {
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎌 Otaku Tab Icon Generator</h1>
+        <p style="text-align: center; opacity: 0.8;">Generate beautiful anime-themed icons for the Otaku Tab Chrome extension</p>
+        
+        <div class="icons-grid">
+            <div class="icon-card">
+                <h3>16×16</h3>
+                <canvas id="icon16" width="64" height="64"></canvas>
+                <br>
+                <button onclick="downloadIcon(16)">Download</button>
+            </div>
+            <div class="icon-card">
+                <h3>32×32</h3>
+                <canvas id="icon32" width="96" height="96"></canvas>
+                <br>
+                <button onclick="downloadIcon(32)">Download</button>
+            </div>
+            <div class="icon-card">
+                <h3>48×48</h3>
+                <canvas id="icon48" width="96" height="96"></canvas>
+                <br>
+                <button onclick="downloadIcon(48)">Download</button>
+            </div>
+            <div class="icon-card">
+                <h3>128×128</h3>
+                <canvas id="icon128" width="128" height="128"></canvas>
+                <br>
+                <button onclick="downloadIcon(128)">Download</button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <button onclick="generateAllIcons()" style="font-size: 16px; padding: 15px 30px;">
+                ✨ Generate All Icons
+            </button>
+        </div>
+
+        <div class="instructions">
+            <h3>📝 How to Use</h3>
+            <ol>
+                <li>Click "Generate All Icons" to create the icon designs</li>
+                <li>Download each icon size by clicking the "Download" button</li>
+                <li>Save the icons as <code>icon16.png</code>, <code>icon32.png</code>, <code>icon48.png</code>, and <code>icon128.png</code></li>
+                <li>Place them in the <code>icons/</code> folder of your extension</li>
+                <li>The icons will automatically be used by the Chrome extension</li>
+            </ol>
+            
+            <h3>🎨 Design Features</h3>
+            <ul>
+                <li><strong>Dark Theme:</strong> Matches the app's color scheme (#1a1a2e, #1f2241)</li>
+                <li><strong>Accent Color:</strong> Vibrant pink/red accent (#e94560)</li>
+                <li><strong>Stylized "O":</strong> Represents "Otaku" with modern donut design</li>
+                <li><strong>Anime Sparkles:</strong> Small decorative elements for anime aesthetic</li>
+                <li><strong>Gradient Effects:</strong> Subtle depth and modern appearance</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function createOtakuIcon(size) {
+            const canvas = document.getElementById(`icon${size}`);
+            const ctx = canvas.getContext('2d');
+            const scale = canvas.width / size; // Scale for display
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.scale(scale, scale);
+            
+            const center = size / 2;
+            const outerRadius = size * 0.45;
+            
+            // Colors
+            const bgColor = '#1a1a2e';
+            const surfaceColor = '#1f2241'; 
+            const accentColor = '#e94560';
+            const textColor = '#f5f6fa';
+            
+            // Create gradient background
+            const gradient = ctx.createRadialGradient(center, center, 0, center, center, outerRadius);
+            gradient.addColorStop(0, surfaceColor);
+            gradient.addColorStop(1, bgColor);
+            
+            // Draw main circle
+            ctx.beginPath();
+            ctx.arc(center, center, outerRadius, 0, 2 * Math.PI);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Draw border
+            ctx.strokeStyle = accentColor;
+            ctx.lineWidth = Math.max(1, size / 24);
+            ctx.stroke();
+            
+            // Draw the "O" shape
+            const innerRadius = size * 0.18;
+            const borderWidth = Math.max(2, size / 12);
+            
+            // Outer part of "O"
+            ctx.beginPath();
+            ctx.arc(center, center, innerRadius + borderWidth, 0, 2 * Math.PI);
+            ctx.fillStyle = accentColor;
+            ctx.fill();
+            
+            // Inner hole of "O"
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(center, center, innerRadius, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // Add sparkles for larger icons
+            if (size >= 32) {
+                const sparklePositions = [
+                    [center - outerRadius + 6, center - outerRadius + 8],
+                    [center + outerRadius - 8, center - outerRadius + 6],
+                    [center - outerRadius + 8, center + outerRadius - 6],
+                    [center + outerRadius - 6, center + outerRadius - 8]
+                ];
+                
+                const sparkleSize = Math.max(2, size / 32);
+                ctx.fillStyle = textColor;
+                
+                sparklePositions.forEach(([x, y]) => {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y - sparkleSize);
+                    ctx.lineTo(x + sparkleSize, y);
+                    ctx.lineTo(x, y + sparkleSize);
+                    ctx.lineTo(x - sparkleSize, y);
+                    ctx.closePath();
+                    ctx.fill();
+                });
+            }
+            
+            // Reset transform
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+        
+        function generateAllIcons() {
+            [16, 32, 48, 128].forEach(size => {
+                createOtakuIcon(size);
+            });
+        }
+        
+        function downloadIcon(size) {
+            const canvas = document.getElementById(`icon${size}`);
+            
+            // Create a new canvas at actual size
+            const downloadCanvas = document.createElement('canvas');
+            downloadCanvas.width = size;
+            downloadCanvas.height = size;
+            const ctx = downloadCanvas.getContext('2d');
+            
+            // Redraw at actual size
+            const center = size / 2;
+            const outerRadius = size * 0.45;
+            
+            // Colors
+            const bgColor = '#1a1a2e';
+            const surfaceColor = '#1f2241'; 
+            const accentColor = '#e94560';
+            const textColor = '#f5f6fa';
+            
+            // Create gradient background
+            const gradient = ctx.createRadialGradient(center, center, 0, center, center, outerRadius);
+            gradient.addColorStop(0, surfaceColor);
+            gradient.addColorStop(1, bgColor);
+            
+            // Draw main circle
+            ctx.beginPath();
+            ctx.arc(center, center, outerRadius, 0, 2 * Math.PI);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Draw border
+            ctx.strokeStyle = accentColor;
+            ctx.lineWidth = Math.max(1, size / 24);
+            ctx.stroke();
+            
+            // Draw the "O" shape
+            const innerRadius = size * 0.18;
+            const borderWidth = Math.max(2, size / 12);
+            
+            // Outer part of "O"
+            ctx.beginPath();
+            ctx.arc(center, center, innerRadius + borderWidth, 0, 2 * Math.PI);
+            ctx.fillStyle = accentColor;
+            ctx.fill();
+            
+            // Inner hole of "O"
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(center, center, innerRadius, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // Add sparkles for larger icons
+            if (size >= 32) {
+                const sparklePositions = [
+                    [center - outerRadius + 6, center - outerRadius + 8],
+                    [center + outerRadius - 8, center - outerRadius + 6],
+                    [center - outerRadius + 8, center + outerRadius - 6],
+                    [center + outerRadius - 6, center + outerRadius - 8]
+                ];
+                
+                const sparkleSize = Math.max(2, size / 32);
+                ctx.fillStyle = textColor;
+                
+                sparklePositions.forEach(([x, y]) => {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y - sparkleSize);
+                    ctx.lineTo(x + sparkleSize, y);
+                    ctx.lineTo(x, y + sparkleSize);
+                    ctx.lineTo(x - sparkleSize, y);
+                    ctx.closePath();
+                    ctx.fill();
+                });
+            }
+            
+            // Download
+            const link = document.createElement('a');
+            link.download = `icon${size}.png`;
+            link.href = downloadCanvas.toDataURL();
+            link.click();
+        }
+        
+        // Generate icons on page load
+        window.addEventListener('load', generateAllIcons);
+    </script>
+</body>
+</html>
