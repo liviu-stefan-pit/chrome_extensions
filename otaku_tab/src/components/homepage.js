@@ -3,38 +3,26 @@ import { fetchTrendingNow, fetchPopularSeason } from '../api/anilist-only.js';
 const trendingContainer = () => document.getElementById('row-trending');
 const popularContainer = () => document.getElementById('row-popular');
 
-function attachScrollerControls(rowId){
+function enableWheelHorizontal(rowId){
   const row = document.getElementById(rowId);
-  const wrapper = row?.closest('.hp-row-wrapper');
-  if(!row || !wrapper) return;
-  // Avoid duplicating controls
-  if(wrapper.querySelector('.hp-nav')) return;
-  const nav = document.createElement('div');
-  nav.className = 'hp-nav';
-  nav.innerHTML = `
-    <button class="hp-btn prev" aria-label="Scroll left" data-dir="-1" tabindex="0">◂</button>
-    <button class="hp-btn next" aria-label="Scroll right" data-dir="1" tabindex="0">▸</button>
-  `;
-  wrapper.appendChild(nav);
-  const step = () => Math.round(row.clientWidth * 0.85);
-  function doScroll(dir){
-    row.scrollBy({left: dir * step(), behavior: 'smooth'});
-  }
-  nav.addEventListener('click', e=>{
-    const btn = e.target.closest('button[data-dir]');
-    if(!btn) return;
-    doScroll(parseInt(btn.dataset.dir,10));
-  });
-  // Keyboard support (row focus + arrows)
+  if(!row) return;
+  // Make focusable for keyboard nav
   row.setAttribute('tabindex','0');
-  row.addEventListener('keydown', e=>{
-    if(e.key==='ArrowRight'){ e.preventDefault(); doScroll(1);} else if(e.key==='ArrowLeft'){ e.preventDefault(); doScroll(-1);} });
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(en=>{
-      if(en.isIntersecting){ wrapper.classList.add('in-view'); io.disconnect(); }
-    });
-  }, {threshold:0.1});
-  io.observe(row);
+  // Keyboard arrows
+  row.addEventListener('keydown', e => {
+    if(e.key === 'ArrowRight'){ e.preventDefault(); row.scrollBy({left: row.clientWidth * 0.8, behavior:'smooth'}); }
+    else if(e.key === 'ArrowLeft'){ e.preventDefault(); row.scrollBy({left: -row.clientWidth * 0.8, behavior:'smooth'}); }
+  });
+  // Wheel translate vertical -> horizontal
+  row.addEventListener('wheel', e => {
+    // If horizontal intent already, allow default
+    if(Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    // Ignore with modifier keys (let browser zoom etc.)
+    if(e.ctrlKey || e.metaKey) return;
+    const factor = 1; // direct mapping for natural feel
+    row.scrollBy({ left: e.deltaY * factor, behavior: 'auto' });
+    e.preventDefault();
+  }, { passive:false });
 }
 
 function skeletonRow(count=6){
@@ -75,10 +63,10 @@ export async function initHomepage(){
       fetchTrendingNow(12),
       fetchPopularSeason(12)
     ]);
-    renderRow(tEl, trending.slice(0,18));
-    renderRow(pEl, popular.slice(0,18));
-    attachScrollerControls('row-trending');
-    attachScrollerControls('row-popular');
+  renderRow(tEl, trending.slice(0,18));
+  renderRow(pEl, popular.slice(0,18));
+  enableWheelHorizontal('row-trending');
+  enableWheelHorizontal('row-popular');
     window.addEventListener('resize', debounce(()=>{
       ['row-trending','row-popular'].forEach(id=>{
         const el = document.getElementById(id);
