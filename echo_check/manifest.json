@@ -1,0 +1,24 @@
+{
+  "name": "Secure Side Panel Extension",
+  "version": "1.0",
+  "manifest_version": 3,
+  "description": "A secure and correct side panel implementation.",
+  "permissions": [
+    "sidePanel",
+    "scripting",
+    "tabs",
+    "activeTab"
+  ],
+  "optional_host_permissions": [
+    "*://*/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "action": {
+    "default_title": "Open Side Panel"
+  }
+}
