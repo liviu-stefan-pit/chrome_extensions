@@ -4,18 +4,38 @@
 
 /* Anime-inspired neon theme design system */
 @layer components {
-  /* Layout containers */
-  .otk-layout { @apply relative z-10 grid h-screen min-h-screen gap-6 p-4 lg:grid-cols-[360px_1fr] lg:p-6; }
-  .otk-panel { 
-    @apply relative flex flex-col min-h-0 rounded-2xl border border-dark-border/50 
-    bg-gradient-to-br from-dark-surface/90 to-dark-card/80 backdrop-blur-xl p-5 shadow-card overflow-hidden;
+  /* Layout containers - new structure */
+  .otk-layout { 
+    @apply relative z-10 grid h-screen min-h-screen gap-4 p-3 
+    lg:grid-cols-[300px_1fr] lg:gap-6 lg:p-5; 
   }
-  .otk-panel:before { 
+  
+  /* Favorites panel - left sidebar */
+  .otk-favorites-panel { 
+    @apply relative flex flex-col min-h-0 rounded-2xl border border-dark-border/30 
+    bg-gradient-to-br from-dark-panel/95 to-dark-surface/90 backdrop-blur-xl 
+    p-4 shadow-card overflow-hidden;
+  }
+  .otk-favorites-panel:before { 
     content:""; 
     @apply pointer-events-none absolute inset-0 
-    bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.15),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(0,255,255,0.1),transparent_50%)] 
+    bg-[radial-gradient(circle_at_30%_20%,rgba(167,139,250,0.08),transparent_60%)] 
     mix-blend-overlay; 
   }
+  
+  /* Main content panel */
+  .otk-content-panel { 
+    @apply relative flex flex-col min-h-0 rounded-2xl border border-dark-border/30 
+    bg-gradient-to-br from-dark-panel/95 to-dark-surface/90 backdrop-blur-xl 
+    p-5 shadow-card overflow-hidden;
+  }
+  .otk-content-panel:before { 
+    content:""; 
+    @apply pointer-events-none absolute inset-0 
+    bg-[radial-gradient(circle_at_70%_30%,rgba(167,139,250,0.08),transparent_60%)] 
+    mix-blend-overlay; 
+  }
+  
   .otk-content { @apply flex flex-col gap-6 min-h-0; }
 
   /* Titles with neon glow */
@@ -221,6 +241,121 @@
   .hp-meta { @apply p-2 flex flex-col gap-1 text-[11px] leading-snug font-medium line-clamp-2; }
   .hp-score { @apply block text-[10px] font-semibold text-neon-purple/90 mt-1; }
   .skeleton-tile { @apply w-[140px] sm:w-[150px] md:w-[165px] h-[220px]; }
+  
+  /* Favorites component styles */
+  .fav-swimlanes {
+    @apply flex gap-4 overflow-x-auto otk-scroll pb-3;
+    scroll-snap-type: x proximity;
+  }
+  
+  .fav-day-column {
+    @apply flex-none w-[200px] flex flex-col gap-2;
+    scroll-snap-align: start;
+  }
+  
+  .fav-day-header {
+    @apply text-xs font-bold tracking-wider uppercase text-cyber-300 px-2 py-2 
+    flex items-center justify-between gap-2 bg-dark-card/40 rounded-lg border border-dark-border/50;
+  }
+  
+  .fav-day-today .fav-day-header {
+    @apply bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 border-neon-purple/40 text-neon-purple;
+  }
+  
+  .fav-today-badge {
+    @apply text-[9px] px-2 py-0.5 rounded-full bg-neon-purple/30 text-white font-bold;
+  }
+  
+  .fav-day-content {
+    @apply flex flex-col gap-3 overflow-y-auto otk-scroll pr-1;
+    max-height: calc(100vh - 200px);
+  }
+  
+  .fav-card {
+    @apply relative flex flex-col bg-dark-card/50 border border-cyber-600/30 
+    rounded-xl overflow-hidden cursor-pointer transition-all duration-300 
+    hover:-translate-y-1 hover:border-neon-purple/50 hover:shadow-neon-sm;
+  }
+  
+  .fav-thumb-wrapper {
+    @apply relative w-full aspect-[2/3] overflow-hidden;
+  }
+  
+  .fav-thumb-wrapper img {
+    @apply w-full h-full object-cover transition-transform duration-500;
+  }
+  
+  .fav-card:hover .fav-thumb-wrapper img {
+    @apply scale-105;
+  }
+  
+  .fav-remove {
+    @apply absolute top-1 right-1 w-7 h-7 rounded-full bg-dark-bg/80 backdrop-blur-sm 
+    border border-neon-pink/50 text-neon-pink flex items-center justify-center 
+    opacity-0 transition-all duration-300 hover:bg-neon-pink hover:text-white z-10;
+  }
+  
+  /* Show remove button on card hover */
+  .fav-remove.group:hover,
+  .fav-card:hover .fav-remove {
+    opacity: 1;
+  }
+  
+  .fav-meta {
+    @apply p-2 flex flex-col gap-1;
+  }
+  
+  .fav-title {
+    @apply text-[11px] font-semibold leading-snug line-clamp-2 text-cyber-100;
+  }
+  
+  .fav-info {
+    @apply flex items-center justify-between gap-1 text-[9px] text-cyber-300;
+  }
+  
+  .fav-time {
+    @apply font-medium;
+  }
+  
+  .fav-score {
+    @apply text-neon-purple/90 font-bold;
+  }
+  
+  .fav-empty {
+    @apply text-[10px] text-cyber-400 text-center py-8 px-2;
+  }
+  
+  .fav-empty-state {
+    @apply flex flex-col items-center justify-center gap-4 py-12 px-4 text-center;
+  }
+  
+  .fav-empty-state svg {
+    @apply text-cyber-600/50;
+  }
+  
+  .fav-empty-state h3 {
+    @apply text-lg font-bold text-cyber-300 m-0;
+  }
+  
+  .fav-empty-state p {
+    @apply text-sm text-cyber-400 max-w-xs m-0;
+  }
+  
+  /* Favorite toggle button in cards */
+  .fav-toggle {
+    @apply relative inline-flex items-center justify-center w-9 h-9 rounded-full 
+    bg-dark-card/80 backdrop-blur-sm border border-cyber-600/40 text-cyber-300 
+    transition-all duration-300 hover:border-neon-pink hover:text-neon-pink hover:shadow-neon-sm 
+    focus:outline-none focus:ring-2 focus:ring-neon-purple;
+  }
+  
+  .fav-toggle.is-favorited {
+    @apply bg-gradient-to-br from-neon-pink to-neon-purple border-neon-pink text-white shadow-neon-sm;
+  }
+  
+  .fav-toggle svg {
+    @apply w-5 h-5;
+  }
 }
 
 @layer base {
@@ -230,23 +365,21 @@
   body { @apply relative overflow-hidden; }
   body:before { 
     content:""; 
-    @apply pointer-events-none fixed inset-0 opacity-60 mix-blend-overlay z-0
-    bg-[radial-gradient(circle_at_20%_20%,rgba(139,92,246,0.15),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(255,0,127,0.1),transparent_40%),radial-gradient(circle_at_40%_60%,rgba(0,255,255,0.08),transparent_50%)]; 
+    @apply pointer-events-none fixed inset-0 opacity-40 mix-blend-overlay z-0
+    bg-[radial-gradient(circle_at_20%_20%,rgba(167,139,250,0.12),transparent_45%),radial-gradient(circle_at_80%_80%,rgba(255,0,127,0.08),transparent_45%),radial-gradient(circle_at_40%_60%,rgba(96,165,250,0.06),transparent_50%)]; 
   }
   
-  /* Animated background particles */
+  /* Animated background particles - more subtle */
   body:after {
     content: "";
-    @apply pointer-events-none fixed inset-0 z-0 opacity-20;
+    @apply pointer-events-none fixed inset-0 z-0 opacity-10;
     background-image: 
-      radial-gradient(1px 1px at 20px 30px, rgba(139, 92, 246, 0.3), transparent),
-      radial-gradient(1px 1px at 40px 70px, rgba(255, 0, 127, 0.2), transparent),
-      radial-gradient(1px 1px at 90px 40px, rgba(0, 255, 255, 0.2), transparent),
-      radial-gradient(1px 1px at 130px 80px, rgba(139, 92, 246, 0.3), transparent),
-      radial-gradient(1px 1px at 160px 30px, rgba(255, 0, 127, 0.2), transparent);
+      radial-gradient(1px 1px at 20px 30px, rgba(167, 139, 250, 0.4), transparent),
+      radial-gradient(1px 1px at 60px 70px, rgba(96, 165, 250, 0.3), transparent),
+      radial-gradient(1px 1px at 140px 40px, rgba(52, 211, 153, 0.2), transparent);
     background-repeat: repeat;
-    background-size: 200px 100px;
-    animation: float 20s ease-in-out infinite;
+    background-size: 300px 200px;
+    animation: float 25s ease-in-out infinite;
   }
 }
 

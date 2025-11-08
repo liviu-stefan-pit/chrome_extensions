@@ -1,33 +1,37 @@
-// Anime Detail Modal (AniList powered)
+// Anime Detail Modal (AniList powered) with favorite toggle
 import { anilistMediaDetails } from '../api/media-details.js';
+import { addFavorite, removeFavorite, isFavorite } from '../utils/favorites.js';
 
 let detailRoot;
+let currentMedia = null;
 
 export function initAnimeDetail(){
-  if(detailRoot) return;
-  detailRoot = document.createElement('div');
-  detailRoot.id = 'anime-detail-root';
-  detailRoot.innerHTML = `
-    <div class="ad-overlay hidden" id="ad-overlay" aria-hidden="true">
-      <div class="ad-modal" role="dialog" aria-modal="true" aria-labelledby="ad-title">
-        <div class="ad-content" id="ad-content"></div>
-      </div>
-    </div>`;
-  document.body.appendChild(detailRoot);
-  const overlay = document.getElementById('ad-overlay');
+  // Use existing modal from HTML instead of creating new one
+  const overlay = document.getElementById('anime-detail-overlay');
+  if (!overlay) return;
+  
   overlay.addEventListener('click', e=>{ if(e.target===overlay) closeDetail(); });
   document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDetail(); });
+  
+  // Close button handler
+  const closeBtn = overlay.querySelector('.ad-close');
+  closeBtn?.addEventListener('click', closeDetail);
 }
 
 export function showAnimeDetail(id){
-  initAnimeDetail();
-  const overlay = document.getElementById('ad-overlay');
-  const content = document.getElementById('ad-content');
+  const overlay = document.getElementById('anime-detail-overlay');
+  const content = document.getElementById('anime-detail-content');
+  if (!overlay || !content) return;
+  
   overlay.classList.remove('hidden');
   overlay.setAttribute('aria-hidden','false');
   content.innerHTML = skeleton();
-  anilistMediaDetails(id).then(data=>{
-    content.innerHTML = render(data);
+  
+  anilistMediaDetails(id).then(async data=>{
+    currentMedia = data;
+    const favorited = await isFavorite(id);
+    content.innerHTML = render(data, favorited);
+    attachFavoriteToggle(id);
   }).catch(err=>{
     console.error('[OtakuTab] detail error', err);
     content.innerHTML = `<div class='otk-error p-4'>Failed to load details.</div>`;
@@ -35,17 +39,55 @@ export function showAnimeDetail(id){
 }
 
 export function closeDetail(){
-  const overlay = document.getElementById('ad-overlay');
+  const overlay = document.getElementById('anime-detail-overlay');
   if(!overlay) return;
   overlay.classList.add('hidden');
   overlay.setAttribute('aria-hidden','true');
+  currentMedia = null;
+}
+
+function attachFavoriteToggle(id) {
+  const favBtn = document.getElementById('fav-toggle-btn');
+  if (!favBtn) return;
+  
+  favBtn.addEventListener('click', async () => {
+    const wasFavorited = favBtn.classList.contains('is-favorited');
+    
+    if (wasFavorited) {
+      await removeFavorite(id);
+      favBtn.classList.remove('is-favorited');
+      favBtn.title = 'Add to favorites';
+    } else {
+      // Convert AniList media to storage format
+      if (currentMedia) {
+        await addFavorite({
+          mal_id: currentMedia.id,
+          id: currentMedia.id,
+          title: currentMedia.title.english || currentMedia.title.romaji || 'Untitled',
+          image: currentMedia.coverImage?.large || currentMedia.coverImage?.medium || '',
+          images: {
+            jpg: {
+              image_url: currentMedia.coverImage?.large || currentMedia.coverImage?.medium || ''
+            }
+          },
+          score: currentMedia.meanScore ? (currentMedia.meanScore / 10) : null,
+          episodes: currentMedia.episodes,
+          url: currentMedia.siteUrl,
+          airingAt: currentMedia.nextAiringEpisode?.airingAt || null,
+          broadcast: {}
+        });
+      }
+      favBtn.classList.add('is-favorited');
+      favBtn.title = 'Remove from favorites';
+    }
+  });
 }
 
 function skeleton(){
-  return `<div class='ad-grid'>${Array.from({length:3}).map(()=>`<div class='skeleton h-[140px]'></div>`).join('')}</div>`;
+  return `<div class='p-6'>${Array.from({length:3}).map(()=>`<div class='skeleton h-[140px] mb-3'></div>`).join('')}</div>`;
 }
 
-function render(media){
+function render(media, isFavorited = false){
   if(!media) return '<div class="p-4">No data.</div>';
   const title = escape(media.title.english || media.title.romaji || media.title.native || 'Untitled');
   const cover = media.coverImage?.extraLarge || media.coverImage?.large || '';
@@ -63,27 +105,44 @@ function render(media){
   const airing = media.nextAiringEpisode ? `Ep ${media.nextAiringEpisode.episode} airs ${relativeTime(media.nextAiringEpisode.airingAt*1000)}` : '';
 
   const badges = [format, season, episodes, duration].filter(Boolean).map(b=>`<span class='ad-badge'>${escape(b)}</span>`).join('');
+  
+  const favClass = isFavorited ? 'is-favorited' : '';
+  const favTitle = isFavorited ? 'Remove from favorites' : 'Add to favorites';
 
   return `
-    <div class='ad-header'>
-      ${banner?`<div class='ad-banner'><img src='${banner}' alt='Banner'></div>`:''}
-      <div class='ad-hero'>
-        <div class='ad-cover'><img src='${cover}' alt='${title} cover'></div>
-        <div class='ad-hero-meta'>
-          <h2 id='ad-title' class='ad-title'>${title}</h2>
-          <div class='ad-badges'>${badges}</div>
-          <div class='ad-sub'>${studios?escape(studios)+' · ':''}${genres}</div>
-          <div class='ad-tags'>${tags}</div>
-          <div class='ad-airing'>${airing}</div>
-          <div class='ad-score'>${score?`★ ${score}`:''}</div>
-          <div class='ad-actions'>
+    <div class="ad-header">
+      ${banner ? `
+        <div class="ad-banner">
+          <img src="${banner}" alt="Banner">
+          <div class="ad-banner-gradient" aria-hidden="true"></div>
+        </div>` : ''}
+      <div class="ad-hero">
+        <div class="ad-cover">
+          <img src="${cover}" alt="${title} cover">
+          <button id="fav-toggle-btn" class="ad-fav-btn ${favClass}" title="${favTitle}" aria-pressed="${isFavorited}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="${isFavorited?'currentColor':'none'}" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="ad-hero-meta">
+          <h2 id="ad-title" class="ad-title">${title}</h2>
+          <div class="ad-badges">${badges}</div>
+          <div class="ad-sub">${studios?escape(studios)+' · ':''}${genres}</div>
+          ${tags?`<div class="ad-tags">${tags}</div>`:''}
+          <div class="ad-stats">
+            ${score?`<div class="ad-score" aria-label="Score">★ ${score}</div>`:''}
+            ${airing?`<div class="ad-airing">${airing}</div>`:''}
+          </div>
+          <div class="ad-actions">
             <a href='${site}' target='_blank' rel='noopener' class='otk-btn-subtle'>Open on AniList</a>
           </div>
         </div>
       </div>
     </div>
-    <div class='ad-body'>
-      <article class='ad-desc'>${desc}</article>
+    <div class="ad-body">
+      <h3 class="ad-section-title">Synopsis</h3>
+      <article class="ad-desc">${desc}</article>
     </div>`;
 }
 

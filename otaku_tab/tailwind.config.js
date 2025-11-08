@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Anime-inspired neon theme
+        // Enhanced dark theme with deeper colors
         cyber: {
           50: '#f0f4ff',
           100: '#e0ebff',
@@ -25,17 +25,18 @@ module.exports = {
         neon: {
           pink: '#ff007f',     // hot pink
           cyan: '#00ffff',     // electric cyan
-          purple: '#8b5cf6',   // electric purple
-          blue: '#0080ff',     // electric blue
-          green: '#00ff88',    // neon green
-          yellow: '#ffff00',   // electric yellow
-          orange: '#ff8800'    // neon orange
+          purple: '#a78bfa',   // softer electric purple
+          blue: '#60a5fa',     // softer electric blue
+          green: '#34d399',    // neon green
+          yellow: '#fbbf24',   // electric yellow
+          orange: '#fb923c'    // neon orange
         },
         dark: {
-          bg: '#0a0a0f',       // very dark blue-black
-          surface: '#1a1a2e',  // dark blue-grey
-          card: '#16213e',     // darker blue
-          border: '#2a2f5b'    // medium blue-grey
+          bg: '#050508',       // almost black with blue tint
+          surface: '#0f0f1a',  // very dark blue-grey
+          card: '#1a1a2e',     // dark blue-grey
+          panel: '#12121f',    // dark panel bg
+          border: '#1f1f35'    // subtle border
         }
       },
       fontFamily: {
