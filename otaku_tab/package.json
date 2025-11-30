@@ -1,15 +1,16 @@
 {
   "name": "otaku-tab",
-  "version": "0.1.0",
-  "description": "A sleek anime-themed new tab dashboard featuring airing schedule, search, and discovery powered by Jikan API.",
-  "main": "index.html",
+  "version": "1.0.0",
+  "description": "A modern, sleek anime-themed new tab dashboard featuring airing schedule, search, and discovery powered by Jikan API.",
+  "type": "module",
   "scripts": {
-    "dev": "npm run build:css && echo 'Load extension in Chrome Developer mode'",
-    "build": "npm run build:css && echo 'Extension ready for Chrome Web Store'",
-    "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/tailwind.css --minify",
-    "watch:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/tailwind.css --watch",
+    "dev": "vite",
+    "build": "tsc && vite build && npm run copy-manifest",
+    "preview": "vite preview",
+    "copy-manifest": "node scripts/copy-assets.js",
     "icons": "python icons/generate_icons.py",
-    "test": "echo 'Open Chrome, go to chrome://extensions, enable Developer mode, click Load unpacked, select this folder'"
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "keywords": [
     "chrome-extension",
@@ -28,17 +29,28 @@
     "type": "git",
     "url": "https://github.com/liviu-stefan-pit/chrome_extensions"
   },
-  "dependencies": {},
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide": "^0.454.0"
+  },
   "devDependencies": {
-    "tailwindcss": "^3.4.10",
+    "@types/chrome": "^0.0.268",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.56.0",
     "postcss": "^8.4.41",
-    "autoprefixer": "^10.4.20"
+    "tailwindcss": "^3.4.10",
+    "terser": "^5.27.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
   },
   "chrome": {
     "manifest_version": 3,
     "minimum_chrome_version": "88"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   }
 }

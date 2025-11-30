@@ -95,8 +95,15 @@ async function renderFavorites() {
     return;
   }
   
+  // Reorder days so today comes first, then the rest in sequence
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+  const todayIndex = DAYS_ORDER.indexOf(today);
+  const reorderedDays = todayIndex >= 0
+    ? [...DAYS_ORDER.slice(todayIndex), ...DAYS_ORDER.slice(0, todayIndex)]
+    : DAYS_ORDER;
+  
   // Render swimlanes for each day
-  const swimlanesHTML = DAYS_ORDER.map(day => 
+  const swimlanesHTML = reorderedDays.map(day => 
     createDaySwimlane(day, favoritesByDay[day])
   ).join('');
   

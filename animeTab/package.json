@@ -1,0 +1,44 @@
+{
+  "name": "otaku-tab",
+  "version": "0.1.0",
+  "description": "A sleek anime-themed new tab dashboard featuring airing schedule, search, and discovery powered by Jikan API.",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npm run build:css && echo 'Load extension in Chrome Developer mode'",
+    "build": "npm run build:css && echo 'Extension ready for Chrome Web Store'",
+    "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/tailwind.css --watch",
+    "icons": "python icons/generate_icons.py",
+    "test": "echo 'Open Chrome, go to chrome://extensions, enable Developer mode, click Load unpacked, select this folder'"
+  },
+  "keywords": [
+    "chrome-extension",
+    "anime",
+    "otaku",
+    "manga",
+    "new-tab",
+    "dashboard",
+    "jikan-api",
+    "myanimelist",
+    "airing-schedule"
+  ],
+  "author": "GitHub Copilot",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liviu-stefan-pit/chrome_extensions"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "tailwindcss": "^3.4.10",
+    "postcss": "^8.4.41",
+    "autoprefixer": "^10.4.20"
+  },
+  "chrome": {
+    "manifest_version": 3,
+    "minimum_chrome_version": "88"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
