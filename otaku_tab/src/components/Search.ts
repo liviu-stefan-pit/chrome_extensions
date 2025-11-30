@@ -73,7 +73,7 @@ function renderSearchResult(anime: any): string {
   const imageUrl = getAnimeImage(anime);
   const title = truncateText(getAnimeTitle(anime), 50);
   const type = anime.format || 'Unknown';
-  const score = anime.averageScore ? anime.averageScore.toFixed(0) : 'N/A';
+  const score = anime.averageScore ? (anime.averageScore / 10).toFixed(1) : 'N/A';
 
   return `
     <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-dark-700/60 transition-colors group" data-anime-id="${anime.id}">

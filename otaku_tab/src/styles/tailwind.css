@@ -194,7 +194,7 @@
   .otk-search-wrapper { @apply relative; }
   .otk-search-results { 
     @apply list-none m-0 p-0 absolute left-0 right-0 bg-dark-surface/95 
-    border border-cyber-600/50 rounded-xl shadow-neon-lg max-h-[340px] overflow-y-auto z-20 
+    border border-cyber-600/50 rounded-xl shadow-neon-lg max-h-[340px] overflow-y-auto 
     backdrop-blur-xl; 
   }
   .otk-search-results li a { 

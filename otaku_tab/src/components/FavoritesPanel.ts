@@ -80,7 +80,7 @@ function renderFavoriteCard(fav: any): string {
         <div class="flex-1 min-w-0 flex flex-col">
           <h4 class="text-sm font-semibold text-dark-50 mb-1 line-clamp-2">${title}</h4>
           <div class="mt-auto text-xs text-dark-400 space-y-1">
-            ${fav.score ? `<div class="text-accent-amber">⭐ ${fav.score.toFixed(0)}</div>` : ''}
+            ${fav.score ? `<div class="text-accent-amber">⭐ ${(fav.score / 10).toFixed(1)}</div>` : ''}
             ${fav.status ? `<div class="capitalize">${fav.status.toLowerCase().replace('_', ' ')}</div>` : ''}
             <div class="text-dark-500">${addedAgo}</div>
           </div>
