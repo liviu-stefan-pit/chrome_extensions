@@ -116,7 +116,7 @@ class AniListAPIService {
     return prefs.showAdultContent ?? false;
   }
 
-  async getTopAiring(limit: number = 30): Promise<AniListAnime[]> {
+  async getTopAiring(page: number = 1, perPage: number = 30): Promise<AniListAnime[]> {
     const prefs = await preferencesService.getPreferences();
     const showAdult = prefs.showAdultContent ?? false;
     const adultOnly = prefs.adultContentOnly ?? false;
@@ -132,8 +132,12 @@ class AniListAPIService {
       isAdultFilter = false;
     }
     
+    // Only cache page 1
+    const shouldCache = page === 1;
+    const cacheKey = `top_alltime_${adultOnly ? 'adult_only' : showAdult ? 'with_adult' : 'safe'}`;
+    
     return this.fetchWithCache(
-      `top_alltime_${adultOnly ? 'adult_only' : showAdult ? 'with_adult' : 'safe'}`,
+      shouldCache ? cacheKey : `${cacheKey}_page${page}`,
       async () => {
         const query = `
           query ($page: Int, $perPage: Int, $isAdult: Boolean) {
@@ -190,11 +194,11 @@ class AniListAPIService {
           }
         `;
 
-        console.log('[AniList] Fetching top all-time, adultOnly:', adultOnly, 'showAdult:', showAdult, 'isAdult filter:', isAdultFilter);
+        console.log('[AniList] Fetching top all-time, page:', page, 'adultOnly:', adultOnly, 'showAdult:', showAdult, 'isAdult filter:', isAdultFilter);
 
         const variables: any = {
-          page: 1,
-          perPage: limit,
+          page: page,
+          perPage: perPage,
         };
         
         // Only add isAdult if we want to filter (null means show all/mixed)
@@ -206,11 +210,12 @@ class AniListAPIService {
 
         console.log('[AniList] Top all-time received:', data.Page.media.length, 'anime');
         return data.Page.media;
-      }
+      },
+      { cache: shouldCache }
     );
   }
 
-  async getCurrentSeason(limit: number = 30): Promise<AniListAnime[]> {
+  async getCurrentSeason(page: number = 1, perPage: number = 30): Promise<AniListAnime[]> {
     const prefs = await preferencesService.getPreferences();
     const showAdult = prefs.showAdultContent ?? false;
     const adultOnly = prefs.adultContentOnly ?? false;
@@ -223,8 +228,12 @@ class AniListAPIService {
       isAdultFilter = false;
     }
     
+    // Only cache page 1
+    const shouldCache = page === 1;
+    const cacheKey = `current_season_top_${adultOnly ? 'adult_only' : showAdult ? 'with_adult' : 'safe'}`;
+    
     return this.fetchWithCache(
-      `current_season_top_${adultOnly ? 'adult_only' : showAdult ? 'with_adult' : 'safe'}`,
+      shouldCache ? cacheKey : `${cacheKey}_page${page}`,
       async () => {
         const now = new Date();
         const year = now.getFullYear();
@@ -291,13 +300,13 @@ class AniListAPIService {
           }
         `;
 
-        console.log('[AniList] Fetching current season:', season, year, 'adultOnly:', adultOnly, 'showAdult:', showAdult, 'isAdult filter:', isAdultFilter);
+        console.log('[AniList] Fetching current season:', season, year, 'page:', page, 'adultOnly:', adultOnly, 'showAdult:', showAdult, 'isAdult filter:', isAdultFilter);
 
         const variables: any = {
           season,
           year,
-          page: 1,
-          perPage: limit,
+          page: page,
+          perPage: perPage,
         };
         
         // Only add isAdult if we want to filter (null means show all/mixed)
@@ -309,7 +318,8 @@ class AniListAPIService {
 
         console.log('[AniList] Current season received:', data.Page.media.length, 'anime');
         return data.Page.media;
-      }
+      },
+      { cache: shouldCache }
     );
   }
 
