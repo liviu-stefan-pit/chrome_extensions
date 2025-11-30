@@ -9,7 +9,7 @@ import type {
 import { preferencesService } from './preferences';
 
 const API_BASE = 'https://graphql.anilist.co';
-const CACHE_DURATION = 1000 * 60 * 60 * 2; // 2 hours
+const CACHE_DURATION = 1000 * 60 * 60 * 6; // 6 hours
 
 interface FetchOptions {
   retries?: number;
@@ -117,15 +117,28 @@ class AniListAPIService {
   }
 
   async getTopAiring(limit: number = 30): Promise<AniListAnime[]> {
-    const showAdult = await this.shouldShowAdult();
+    const prefs = await preferencesService.getPreferences();
+    const showAdult = prefs.showAdultContent ?? false;
+    const adultOnly = prefs.adultContentOnly ?? false;
+    
+    // Determine isAdult filter based on preferences
+    // adultOnly=true, showAdult=true: isAdult=true (only adult)
+    // adultOnly=false, showAdult=true: isAdult=null (mixed - omit parameter)
+    // adultOnly=false, showAdult=false: isAdult=false (safe only)
+    let isAdultFilter: boolean | null = null;
+    if (adultOnly) {
+      isAdultFilter = true;
+    } else if (!showAdult) {
+      isAdultFilter = false;
+    }
     
     return this.fetchWithCache(
-      `top_airing_${showAdult ? 'adult' : 'safe'}`,
+      `top_alltime_${adultOnly ? 'adult_only' : showAdult ? 'with_adult' : 'safe'}`,
       async () => {
         const query = `
           query ($page: Int, $perPage: Int, $isAdult: Boolean) {
             Page(page: $page, perPage: $perPage) {
-              media(status: RELEASING, type: ANIME, sort: POPULARITY_DESC, isAdult: $isAdult) {
+              media(type: ANIME, sort: SCORE_DESC, isAdult: $isAdult) {
                 id
                 idMal
                 title {
@@ -150,6 +163,10 @@ class AniListAPIService {
                 popularity
                 favourites
                 genres
+                tags {
+                  name
+                  rank
+                }
                 studios {
                   nodes {
                     id
@@ -173,22 +190,41 @@ class AniListAPIService {
           }
         `;
 
-        const data = await this.fetchGraphQL<AniListMediaPage>(query, {
+        console.log('[AniList] Fetching top all-time, adultOnly:', adultOnly, 'showAdult:', showAdult, 'isAdult filter:', isAdultFilter);
+
+        const variables: any = {
           page: 1,
           perPage: limit,
-          isAdult: showAdult,
-        });
+        };
+        
+        // Only add isAdult if we want to filter (null means show all/mixed)
+        if (isAdultFilter !== null) {
+          variables.isAdult = isAdultFilter;
+        }
 
+        const data = await this.fetchGraphQL<AniListMediaPage>(query, variables);
+
+        console.log('[AniList] Top all-time received:', data.Page.media.length, 'anime');
         return data.Page.media;
       }
     );
   }
 
   async getCurrentSeason(limit: number = 30): Promise<AniListAnime[]> {
-    const showAdult = await this.shouldShowAdult();
+    const prefs = await preferencesService.getPreferences();
+    const showAdult = prefs.showAdultContent ?? false;
+    const adultOnly = prefs.adultContentOnly ?? false;
+    
+    // Determine isAdult filter based on preferences
+    let isAdultFilter: boolean | null = null;
+    if (adultOnly) {
+      isAdultFilter = true;
+    } else if (!showAdult) {
+      isAdultFilter = false;
+    }
     
     return this.fetchWithCache(
-      `current_season_${showAdult ? 'adult' : 'safe'}`,
+      `current_season_top_${adultOnly ? 'adult_only' : showAdult ? 'with_adult' : 'safe'}`,
       async () => {
         const now = new Date();
         const year = now.getFullYear();
@@ -203,7 +239,7 @@ class AniListAPIService {
         const query = `
           query ($season: MediaSeason, $year: Int, $page: Int, $perPage: Int, $isAdult: Boolean) {
             Page(page: $page, perPage: $perPage) {
-              media(season: $season, seasonYear: $year, type: ANIME, sort: POPULARITY_DESC, isAdult: $isAdult) {
+              media(season: $season, seasonYear: $year, type: ANIME, sort: SCORE_DESC, isAdult: $isAdult) {
                 id
                 idMal
                 title {
@@ -228,6 +264,10 @@ class AniListAPIService {
                 popularity
                 favourites
                 genres
+                tags {
+                  name
+                  rank
+                }
                 studios {
                   nodes {
                     id
@@ -251,24 +291,35 @@ class AniListAPIService {
           }
         `;
 
-        const data = await this.fetchGraphQL<AniListMediaPage>(query, {
+        console.log('[AniList] Fetching current season:', season, year, 'adultOnly:', adultOnly, 'showAdult:', showAdult, 'isAdult filter:', isAdultFilter);
+
+        const variables: any = {
           season,
           year,
           page: 1,
           perPage: limit,
-          isAdult: showAdult,
-        });
+        };
+        
+        // Only add isAdult if we want to filter (null means show all/mixed)
+        if (isAdultFilter !== null) {
+          variables.isAdult = isAdultFilter;
+        }
 
+        const data = await this.fetchGraphQL<AniListMediaPage>(query, variables);
+
+        console.log('[AniList] Current season received:', data.Page.media.length, 'anime');
         return data.Page.media;
       }
     );
   }
 
   async getSchedule(): Promise<Record<DayOfWeek, AniListAnime[]>> {
-    const showAdult = await this.shouldShowAdult();
+    const prefs = await preferencesService.getPreferences();
+    const showAdult = prefs.showAdultContent ?? false;
+    const adultOnly = prefs.adultContentOnly ?? false;
     
     return this.fetchWithCache(
-      `schedule_${showAdult ? 'adult' : 'safe'}`,
+      `schedule_${adultOnly ? 'adult_only' : showAdult ? 'with_adult' : 'safe'}`,
       async () => {
         // Query each day separately for better results
         const schedule: Record<DayOfWeek, AniListAnime[]> = {
@@ -387,7 +438,8 @@ class AniListAPIService {
             daySchedules.forEach((scheduleEntry) => {
               if (!scheduleEntry.media) return;
               
-              // Filter adult content based on user preference
+              // Filter based on adult content preferences
+              if (adultOnly && !scheduleEntry.media.isAdult) return;
               if (!showAdult && scheduleEntry.media.isAdult) return;
 
               const animeWithAiring: AniListAnime = {
@@ -427,7 +479,17 @@ class AniListAPIService {
       return [];
     }
 
-    const showAdult = await this.shouldShowAdult();
+    const prefs = await preferencesService.getPreferences();
+    const showAdult = prefs.showAdultContent ?? false;
+    const adultOnly = prefs.adultContentOnly ?? false;
+
+    // Determine isAdult filter based on preferences
+    let isAdultFilter: boolean | null = null;
+    if (adultOnly) {
+      isAdultFilter = true;
+    } else if (!showAdult) {
+      isAdultFilter = false;
+    }
 
     const graphqlQuery = `
       query ($search: String, $page: Int, $perPage: Int, $isAdult: Boolean) {
@@ -461,14 +523,20 @@ class AniListAPIService {
       }
     `;
 
+    const variables: any = {
+      search: query,
+      page: 1,
+      perPage: limit,
+    };
+    
+    // Only add isAdult if we want to filter (null means show all/mixed)
+    if (isAdultFilter !== null) {
+      variables.isAdult = isAdultFilter;
+    }
+
     const data = await this.fetchGraphQL<AniListMediaPage>(
       graphqlQuery,
-      {
-        search: query,
-        page: 1,
-        perPage: limit,
-        isAdult: showAdult,
-      },
+      variables,
       { cache: false }
     );
 

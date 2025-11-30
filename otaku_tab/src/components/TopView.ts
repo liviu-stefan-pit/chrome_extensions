@@ -11,7 +11,9 @@ export async function initTopView() {
 
   try {
     const anime = await aniListAPI.getTopAiring();
-    container.innerHTML = anime.map((a) => renderAnimeCard(a)).join('');
+    // Sort by score (highest first)
+    const sortedAnime = [...anime].sort((a, b) => (b.averageScore || 0) - (a.averageScore || 0));
+    container.innerHTML = sortedAnime.map((a) => renderAnimeCard(a)).join('');
   } catch (error) {
     console.error('[TopView] Failed to load top anime:', error);
     container.innerHTML = renderError();

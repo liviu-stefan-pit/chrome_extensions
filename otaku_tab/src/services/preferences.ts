@@ -1,4 +1,4 @@
-import type { UserPreferences } from '../types/jikan';
+import type { UserPreferences } from '../types/preferences';
 
 const PREFERENCES_KEY = 'otaku_tab_preferences';
 
@@ -8,6 +8,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   enableAnimations: true,
   compactMode: false,
   showAdultContent: false,
+  adultContentOnly: false,
 };
 
 class PreferencesService {

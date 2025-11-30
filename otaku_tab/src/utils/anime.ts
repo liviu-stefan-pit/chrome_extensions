@@ -15,7 +15,8 @@ export function getAnimeTitle(anime: AniListAnime): string {
 
 export function formatScore(score?: number): string {
   if (!score) return 'N/A';
-  return score.toFixed(0);
+  // AniList scores are 0-100, convert to 0-10 scale
+  return (score / 10).toFixed(1);
 }
 
 export function formatEpisodes(episodes?: number): string {

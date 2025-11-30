@@ -44,6 +44,9 @@ function renderDaySection(day: string, anime: AniListAnime[], isToday: boolean):
   const dayName = day.charAt(0).toUpperCase() + day.slice(1);
   const badge = isToday ? '<span class="ml-2 px-2 py-0.5 rounded-full bg-accent-pink text-white text-xs font-bold">Today</span>' : '';
 
+  // Sort by score (highest first)
+  const sortedAnime = [...anime].sort((a, b) => (b.averageScore || 0) - (a.averageScore || 0));
+
   if (anime.length === 0) {
     return `
       <div class="space-y-3">
@@ -64,7 +67,7 @@ function renderDaySection(day: string, anime: AniListAnime[], isToday: boolean):
         <span class="ml-auto text-sm font-normal text-dark-400">${anime.length} shows</span>
       </h3>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4">
-        ${anime.map((a) => renderAnimeCard(a)).join('')}
+        ${sortedAnime.map((a) => renderAnimeCard(a)).join('')}
       </div>
     </div>
   `;

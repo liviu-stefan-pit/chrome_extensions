@@ -1,4 +1,4 @@
-import type { FavoriteAnime } from '../types/jikan';
+import type { FavoriteAnime } from '../types/preferences';
 
 const FAVORITES_KEY = 'otaku_tab_favorites';
 

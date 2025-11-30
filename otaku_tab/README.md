@@ -1,6 +1,6 @@
 # Otaku Tab - Modern Anime New Tab Extension
 
-A beautiful, modern Chrome extension that transforms your new tab into an anime discovery hub powered by the Jikan API (MyAnimeList).
+A beautiful, modern Chrome extension that transforms your new tab into an anime discovery hub powered by the AniList API.
 
 ## ✨ Features
 
@@ -80,11 +80,11 @@ otaku_tab/
 │   │   ├── Search.ts        # Search functionality
 │   │   └── TopView.ts       # Top rated view
 │   ├── services/            # Business logic layer
-│   │   ├── jikan.ts         # Jikan API service with caching
+│   │   ├── anilist.ts         # AniList API service with caching
 │   │   ├── favorites.ts     # Favorites management
 │   │   └── preferences.ts   # User preferences
 │   ├── types/               # TypeScript type definitions
-│   │   ├── jikan.ts         # Jikan API types
+│   │   ├── anilist.ts         # AniList API types
 │   │   ├── ui.ts            # UI state types
 │   │   └── modules.d.ts     # Module declarations
 │   ├── utils/               # Utility functions
@@ -133,7 +133,7 @@ otaku_tab/
 
 ## 🔌 API
 
-This extension uses the [Jikan API](https://jikan.moe/) v4, an unofficial MyAnimeList API.
+This extension uses the [AniList API](https://jikan.moe/) v4, an unofficial MyAnimeList API.
 
 ### Endpoints Used
 - `/top/anime` - Top rated anime
@@ -146,15 +146,15 @@ This extension uses the [Jikan API](https://jikan.moe/) v4, an unofficial MyAnim
 ### Rate Limiting
 - Client-side caching (6 hours) to minimize API calls
 - Automatic retry with exponential backoff
-- Respects Jikan API rate limits
+- Respects AniList API rate limits
 
 ## 🔒 Privacy
 
 This extension:
 - ✅ Only stores data locally in Chrome storage
 - ✅ No user tracking or analytics
-- ✅ No external scripts except Jikan API
-- ✅ No permissions beyond storage and Jikan API access
+- ✅ No external scripts except AniList API
+- ✅ No permissions beyond storage and AniList API access
 - ✅ Open source and fully auditable
 
 ## 🤝 Contributing
@@ -179,7 +179,7 @@ MIT License - see [LICENSE](../LICENSE) for details
 
 ## 🙏 Credits
 
-- **Jikan API** - [@jikan-me](https://github.com/jikan-me/jikan)
+- **AniList API** - [@jikan-me](https://github.com/jikan-me/jikan)
 - **MyAnimeList** - Anime data source
 - **Tailwind CSS** - Utility-first CSS framework
 - **Lucide Icons** - Beautiful icon set
@@ -204,8 +204,9 @@ MIT License - see [LICENSE](../LICENSE) for details
 
 For issues, questions, or suggestions:
 - Open an issue on GitHub
-- Check [Jikan API status](https://status.jikan.moe/)
+- Check [AniList API status](https://status.jikan.moe/)
 
 ---
 
 **Made with ❤️ for the anime community**
+

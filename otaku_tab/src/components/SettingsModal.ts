@@ -1,7 +1,7 @@
 import { preferencesService } from '../services/preferences';
 import { aniListAPI } from '../services/anilist';
 import { qs } from '../utils/dom';
-import type { UserPreferences } from '../types/jikan';
+import type { UserPreferences } from '../types/preferences';
 
 let modalElement: HTMLElement | null = null;
 let currentPreferences: UserPreferences;
@@ -101,11 +101,23 @@ function renderModalContent(): string {
         <div class="flex items-center justify-between p-4 bg-dark-800/40 rounded-xl border border-white/10">
           <div>
             <label class="block text-sm font-semibold text-dark-200">Show 18+ Content</label>
-            <p class="text-xs text-dark-400 mt-1">Include adult anime in search and browse results</p>
+            <p class="text-xs text-dark-400 mt-1">Include adult anime in all results (mixed with regular anime)</p>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" id="pref-adult-content" class="sr-only peer" ${currentPreferences.showAdultContent ? 'checked' : ''}>
             <div class="w-11 h-6 bg-dark-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-500/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+          </label>
+        </div>
+
+        <!-- Adult Content Only -->
+        <div id="adult-only-container" class="flex items-center justify-between p-4 bg-dark-800/40 rounded-xl border border-white/10 ${!currentPreferences.showAdultContent ? 'opacity-50 cursor-not-allowed' : ''}">
+          <div>
+            <label class="block text-sm font-semibold text-dark-200">18+ Content Only</label>
+            <p class="text-xs text-dark-400 mt-1">Show ONLY adult anime across all tabs</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="pref-adult-only" class="sr-only peer" ${currentPreferences.adultContentOnly ? 'checked' : ''} ${!currentPreferences.showAdultContent ? 'disabled' : ''}>
+            <div class="w-11 h-6 bg-dark-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-500/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500 peer-disabled:opacity-50"></div>
           </label>
         </div>
 
@@ -180,6 +192,31 @@ function setupEventListeners() {
   // Clear cache button
   const clearCacheBtn = modalElement.querySelector('#clear-cache-btn');
   clearCacheBtn?.addEventListener('click', handleClearCache);
+  
+  // Adult content toggles dependency
+  const adultContentCheckbox = modalElement.querySelector('#pref-adult-content') as HTMLInputElement;
+  const adultOnlyCheckbox = modalElement.querySelector('#pref-adult-only') as HTMLInputElement;
+  const adultOnlyContainer = modalElement.querySelector('#adult-only-container') as HTMLElement;
+  
+  if (adultContentCheckbox && adultOnlyCheckbox && adultOnlyContainer) {
+    // Disable "adult only" if "show adult" is not checked
+    const updateAdultOnlyState = () => {
+      if (!adultContentCheckbox.checked) {
+        adultOnlyCheckbox.checked = false;
+        adultOnlyCheckbox.disabled = true;
+        adultOnlyContainer.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        adultOnlyCheckbox.disabled = false;
+        adultOnlyContainer.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    };
+    
+    // Initialize state
+    updateAdultOnlyState();
+    
+    // Add event listener
+    adultContentCheckbox.addEventListener('change', updateAdultOnlyState);
+  }
 }
 
 async function handleSave() {
@@ -188,6 +225,7 @@ async function handleSave() {
   const enableAnimations = qs<HTMLInputElement>('#pref-animations')?.checked ?? true;
   const compactMode = qs<HTMLInputElement>('#pref-compact')?.checked ?? false;
   const showAdultContent = qs<HTMLInputElement>('#pref-adult-content')?.checked ?? false;
+  const adultContentOnly = qs<HTMLInputElement>('#pref-adult-only')?.checked ?? false;
 
   try {
     await preferencesService.updatePreferences({
@@ -196,6 +234,7 @@ async function handleSave() {
       enableAnimations,
       compactMode,
       showAdultContent,
+      adultContentOnly,
     });
 
     // Show success message

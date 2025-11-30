@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Otaku Tab",
-  "description": "A modern, sleek anime-themed new tab dashboard featuring airing schedule, search, and discovery powered by Jikan API.",
+  "description": "A modern, sleek anime-themed new tab dashboard featuring airing schedule, search, and discovery powered by AniList API.",
   "version": "1.0.0",
   "chrome_url_overrides": {
     "newtab": "index.html"
@@ -16,6 +16,6 @@
     "storage"
   ],
   "host_permissions": [
-    "https://api.jikan.moe/*"
+    "https://graphql.anilist.co/*"
   ]
 }

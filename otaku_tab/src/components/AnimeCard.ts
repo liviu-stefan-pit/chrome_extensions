@@ -7,9 +7,11 @@ export function renderAnimeCard(anime: AniListAnime): string {
   const score = anime.averageScore ? formatScore(anime.averageScore) : 'N/A';
   const type = anime.format || 'Unknown';
   const isAiring = anime.status === 'RELEASING';
+  const isAdultContent = anime.isAdult === true;
 
   return `
     <div class="anime-card" data-anime-id="${anime.id}">
+      ${isAdultContent ? '<div class="absolute top-2 right-2 z-10 bg-red-600 text-white text-xs px-2 py-1 rounded font-bold shadow-lg">18+</div>' : ''}
       <img 
         src="${imageUrl}" 
         alt="${title}"
