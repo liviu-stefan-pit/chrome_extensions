@@ -66,9 +66,10 @@ export async function renderFavorites() {
 function renderFavoriteCard(fav: any): string {
   const addedAgo = formatRelativeTime(fav.added_at);
   const title = truncateText(fav.title, 40);
+  const animeId = fav.id || fav.mal_id; // Support both new and old format
 
   return `
-    <div class="group relative cursor-pointer rounded-xl overflow-hidden bg-dark-800/40 border border-white/5 hover:border-primary-500/30 transition-all hover:scale-[1.02]" data-anime-id="${fav.mal_id}">
+    <div class="group relative cursor-pointer rounded-xl overflow-hidden bg-dark-800/40 border border-white/5 hover:border-primary-500/30 transition-all hover:scale-[1.02]" data-anime-id="${animeId}">
       <div class="flex gap-3 p-3">
         <img 
           src="${fav.image_url}" 
@@ -79,14 +80,14 @@ function renderFavoriteCard(fav: any): string {
         <div class="flex-1 min-w-0 flex flex-col">
           <h4 class="text-sm font-semibold text-dark-50 mb-1 line-clamp-2">${title}</h4>
           <div class="mt-auto text-xs text-dark-400 space-y-1">
-            ${fav.score ? `<div class="text-accent-amber">⭐ ${fav.score.toFixed(1)}</div>` : ''}
-            ${fav.broadcast_day ? `<div>${fav.broadcast_day}${fav.broadcast_time ? ` • ${fav.broadcast_time}` : ''}</div>` : ''}
+            ${fav.score ? `<div class="text-accent-amber">⭐ ${fav.score.toFixed(0)}</div>` : ''}
+            ${fav.status ? `<div class="capitalize">${fav.status.toLowerCase().replace('_', ' ')}</div>` : ''}
             <div class="text-dark-500">${addedAgo}</div>
           </div>
         </div>
         <button 
           class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1.5 rounded-lg bg-dark-900/90 hover:bg-red-500 text-dark-400 hover:text-white transition-all"
-          data-remove-id="${fav.mal_id}"
+          data-remove-id="${animeId}"
           title="Remove from favorites"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -115,12 +115,12 @@ export interface CachedData<T> {
 }
 
 export interface FavoriteAnime {
-  mal_id: number;
+  id?: number;  // AniList ID
+  mal_id?: number;  // MyAnimeList ID (legacy)
+  idMal?: number;  // MAL ID from AniList
   title: string;
   image_url: string;
   score?: number;
-  broadcast_day?: string;
-  broadcast_time?: string;
   episodes?: number;
   status?: string;
   added_at: number;
@@ -131,4 +131,5 @@ export interface UserPreferences {
   defaultView?: 'schedule' | 'browse' | 'top';
   enableAnimations?: boolean;
   compactMode?: boolean;
+  showAdultContent?: boolean;
 }

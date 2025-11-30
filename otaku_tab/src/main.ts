@@ -1,5 +1,5 @@
 import './styles/main.css';
-import { jikanAPI } from './services/jikan';
+import { aniListAPI } from './services/anilist';
 import { favoritesService } from './services/favorites';
 import { preferencesService } from './services/preferences';
 import { initScheduleView } from './components/ScheduleView';
@@ -11,7 +11,7 @@ import { initAnimeModal } from './components/AnimeModal';
 import { qs, qsa } from './utils/dom';
 
 // View management
-let currentView: 'schedule' | 'browse' | 'top' = 'schedule';
+let currentView: 'schedule' | 'browse' | 'top' | null = null;
 
 function switchView(view: 'schedule' | 'browse' | 'top') {
   if (currentView === view) return;
@@ -46,8 +46,17 @@ async function loadViewContent(view: 'schedule' | 'browse' | 'top') {
   const content = qs(`#${view}-content`);
   if (!content) return;
   
-  // Check if already loaded
-  if (content.children.length > 0) return;
+  // Check if already loaded - but always load schedule on first initialization
+  const hasContent = content.children.length > 0;
+  const hasSkeletons = content.querySelector('.skeleton');
+  const hasActualContent = hasContent && !hasSkeletons;
+  
+  // For schedule view, check if we have actual anime cards, not just skeletons
+  if (view === 'schedule' && hasContent && !hasSkeletons && content.querySelector('[data-anime-id]')) {
+    return; // Already loaded with real data
+  } else if (view !== 'schedule' && hasActualContent) {
+    return; // Other views: already loaded
+  }
   
   showLoading();
   
@@ -99,9 +108,9 @@ function hideLoading() {
 async function handleRandomAnime() {
   showLoading();
   try {
-    const anime = await jikanAPI.getRandomAnime();
+    const anime = await aniListAPI.getRandomAnime();
     const { openAnimeModal } = await import('./components/AnimeModal');
-    openAnimeModal(anime.mal_id);
+    openAnimeModal(anime.id);
   } catch (error) {
     console.error('[App] Failed to get random anime:', error);
   } finally {
@@ -137,9 +146,9 @@ async function init() {
     
     const settingsBtn = qs('#settings-btn');
     if (settingsBtn) {
-      settingsBtn.addEventListener('click', () => {
-        // TODO: Open settings modal
-        console.log('[App] Settings clicked');
+      settingsBtn.addEventListener('click', async () => {
+        const { openSettingsModal } = await import('./components/SettingsModal');
+        openSettingsModal();
       });
     }
     
@@ -163,7 +172,7 @@ if (document.readyState === 'loading') {
 
 // Export for debugging
 (window as any).__otakuTab = {
-  jikanAPI,
+  aniListAPI,
   favoritesService,
   preferencesService,
 };

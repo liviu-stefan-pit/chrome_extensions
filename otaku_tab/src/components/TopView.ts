@@ -1,4 +1,4 @@
-import { jikanAPI } from '../services/jikan';
+import { aniListAPI } from '../services/anilist';
 import { qs } from '../utils/dom';
 import { renderAnimeCard } from './AnimeCard';
 
@@ -10,7 +10,7 @@ export async function initTopView() {
   container.innerHTML = Array.from({ length: 24 }, () => '<div class="skeleton aspect-[2/3]"></div>').join('');
 
   try {
-    const anime = await jikanAPI.getTopAiring();
+    const anime = await aniListAPI.getTopAiring();
     container.innerHTML = anime.map((a) => renderAnimeCard(a)).join('');
   } catch (error) {
     console.error('[TopView] Failed to load top anime:', error);

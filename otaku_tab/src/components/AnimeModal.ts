@@ -1,8 +1,8 @@
-import { jikanAPI } from '../services/jikan';
+import { aniListAPI } from '../services/anilist';
 import { favoritesService } from '../services/favorites';
 import { qs } from '../utils/dom';
 import { getAnimeImage, getAnimeTitle, formatScore } from '../utils/anime';
-import type { JikanAnime } from '../types/jikan';
+import type { AniListAnime } from '../types/anilist';
 
 let currentAnimeId: number | null = null;
 
@@ -47,7 +47,7 @@ export async function openAnimeModal(animeId: number) {
   content.innerHTML = renderModalLoading();
 
   try {
-    const anime = await jikanAPI.getAnimeById(animeId);
+    const anime = await aniListAPI.getAnimeById(animeId);
     const isFav = await favoritesService.isFavorite(animeId);
     content.innerHTML = renderModalContent(anime, isFav);
 
@@ -76,15 +76,14 @@ export function closeAnimeModal() {
   currentAnimeId = null;
 }
 
-async function toggleFavorite(anime: JikanAnime) {
+async function toggleFavorite(anime: AniListAnime) {
   try {
     const isFav = await favoritesService.toggleFavorite({
-      mal_id: anime.mal_id,
+      id: anime.id,
+      idMal: anime.idMal,
       title: getAnimeTitle(anime),
       image_url: getAnimeImage(anime),
-      score: anime.score,
-      broadcast_day: anime.broadcast?.day,
-      broadcast_time: anime.broadcast?.time,
+      score: anime.averageScore,
       episodes: anime.episodes,
       status: anime.status,
       added_at: Date.now(),
@@ -117,17 +116,32 @@ async function toggleFavorite(anime: JikanAnime) {
   }
 }
 
-function renderModalContent(anime: JikanAnime, isFavorite: boolean): string {
+function renderModalContent(anime: AniListAnime, isFavorite: boolean): string {
   const imageUrl = getAnimeImage(anime);
   const title = getAnimeTitle(anime);
-  const score = formatScore(anime.score);
-  const synopsis = anime.synopsis || 'No synopsis available.';
-  const genres = anime.genres?.map((g) => g.name).join(', ') || 'Unknown';
-  const type = anime.type || 'Unknown';
+  const score = anime.averageScore ? formatScore(anime.averageScore) : 'N/A';
+  
+  // Clean HTML from description
+  const description = anime.description 
+    ? anime.description.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, '').trim()
+    : 'No description available.';
+  
+  const genres = anime.genres?.join(', ') || 'Unknown';
+  const format = anime.format || 'Unknown';
   const status = anime.status || 'Unknown';
   const episodes = anime.episodes || '?';
-  const aired = anime.aired?.string || 'Unknown';
-  const studios = anime.studios?.map((s) => s.name).join(', ') || 'Unknown';
+  const studios = anime.studios?.nodes
+    ?.filter(s => s.isAnimationStudio)
+    ?.map(s => s.name)
+    ?.join(', ') || 'Unknown';
+  
+  const startDate = anime.startDate 
+    ? `${anime.startDate.month}/${anime.startDate.day}/${anime.startDate.year}`
+    : 'Unknown';
+  
+  const anilistUrl = `https://anilist.co/anime/${anime.id}`;
+  const malUrl = anime.idMal ? `https://myanimelist.net/anime/${anime.idMal}` : null;
+  
   const favClass = isFavorite ? 'is-favorite' : '';
   const favIcon = isFavorite
     ? '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
@@ -155,15 +169,16 @@ function renderModalContent(anime: JikanAnime, isFavorite: boolean): string {
         <!-- Title -->
         <div>
           <h2 class="text-3xl font-bold text-gradient mb-2">${title}</h2>
-          ${anime.title_japanese ? `<p class="text-lg text-dark-300">${anime.title_japanese}</p>` : ''}
+          ${anime.title?.native ? `<p class="text-lg text-dark-300">${anime.title.native}</p>` : ''}
         </div>
 
         <!-- Meta Info -->
         <div class="flex flex-wrap gap-3">
-          <span class="px-3 py-1 rounded-full bg-primary-500/20 text-primary-400 text-sm font-semibold">${type}</span>
+          <span class="px-3 py-1 rounded-full bg-primary-500/20 text-primary-400 text-sm font-semibold">${format}</span>
           <span class="px-3 py-1 rounded-full bg-dark-800 text-dark-200 text-sm">${status}</span>
           <span class="px-3 py-1 rounded-full bg-dark-800 text-dark-200 text-sm">${episodes} episodes</span>
-          ${anime.score ? `<span class="px-3 py-1 rounded-full bg-accent-amber/20 text-accent-amber text-sm font-semibold">⭐ ${score}</span>` : ''}
+          ${anime.averageScore ? `<span class="px-3 py-1 rounded-full bg-accent-amber/20 text-accent-amber text-sm font-semibold">⭐ ${score}</span>` : ''}
+          ${anime.isAdult ? '<span class="px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-sm font-semibold">18+</span>' : ''}
         </div>
 
         <!-- Actions -->
@@ -171,15 +186,16 @@ function renderModalContent(anime: JikanAnime, isFavorite: boolean): string {
           <button id="favorite-btn" class="favorite-btn ${favClass}" title="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}">
             ${favIcon}
           </button>
-          <a href="${anime.url}" target="_blank" class="btn-secondary">
-            View on MAL
+          <a href="${anilistUrl}" target="_blank" class="btn-secondary">
+            View on AniList
           </a>
+          ${malUrl ? `<a href="${malUrl}" target="_blank" class="btn-secondary">View on MAL</a>` : ''}
         </div>
 
-        <!-- Synopsis -->
+        <!-- Description -->
         <div>
-          <h3 class="text-lg font-bold text-dark-200 mb-2">Synopsis</h3>
-          <p class="text-dark-300 leading-relaxed">${synopsis}</p>
+          <h3 class="text-lg font-bold text-dark-200 mb-2">Description</h3>
+          <p class="text-dark-300 leading-relaxed whitespace-pre-line">${description}</p>
         </div>
 
         <!-- Details -->
@@ -193,13 +209,13 @@ function renderModalContent(anime: JikanAnime, isFavorite: boolean): string {
             <span class="text-dark-200 ml-2">${studios}</span>
           </div>
           <div>
-            <span class="text-dark-400">Aired:</span>
-            <span class="text-dark-200 ml-2">${aired}</span>
+            <span class="text-dark-400">Start Date:</span>
+            <span class="text-dark-200 ml-2">${startDate}</span>
           </div>
-          ${anime.broadcast?.string ? `
+          ${anime.season && anime.seasonYear ? `
             <div>
-              <span class="text-dark-400">Broadcast:</span>
-              <span class="text-dark-200 ml-2">${anime.broadcast.string}</span>
+              <span class="text-dark-400">Season:</span>
+              <span class="text-dark-200 ml-2">${anime.season} ${anime.seasonYear}</span>
             </div>
           ` : ''}
         </div>

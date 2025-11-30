@@ -1,10 +1,15 @@
-import { jikanAPI } from '../services/jikan';
-import { getDayOfWeek } from '../utils/anime';
+import { aniListAPI } from '../services/anilist';
 import { qs } from '../utils/dom';
 import { renderAnimeCard } from './AnimeCard';
-import type { JikanScheduleEntry } from '../types/jikan';
+import type { AniListAnime, DayOfWeek } from '../types/anilist';
 
 const DAYS_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+// Get the current day of week in user's local timezone
+function getLocalDayOfWeek(): string {
+  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  return days[new Date().getDay()];
+}
 
 export async function initScheduleView() {
   const container = qs('#schedule-content');
@@ -14,18 +19,20 @@ export async function initScheduleView() {
   container.innerHTML = renderSkeletons();
 
   try {
-    const schedule = await jikanAPI.getFullSchedule();
-    const currentDay = getDayOfWeek();
+    const scheduleData = await aniListAPI.getSchedule();
+    
+    // Get current day in local timezone
+    const localDay = getLocalDayOfWeek();
 
-    // Reorder to start from current day
-    const currentIndex = DAYS_ORDER.indexOf(currentDay);
+    // Reorder to start from current local day
+    const currentIndex = DAYS_ORDER.indexOf(localDay);
     const orderedDays = [
       ...DAYS_ORDER.slice(currentIndex),
       ...DAYS_ORDER.slice(0, currentIndex),
     ];
 
     container.innerHTML = orderedDays
-      .map((day) => renderDaySection(day, schedule[day as keyof typeof schedule] || [], day === currentDay))
+      .map((day) => renderDaySection(day, scheduleData[day as DayOfWeek] || [], day === localDay))
       .join('');
   } catch (error) {
     console.error('[ScheduleView] Failed to load schedule:', error);
@@ -33,7 +40,7 @@ export async function initScheduleView() {
   }
 }
 
-function renderDaySection(day: string, anime: JikanScheduleEntry[], isToday: boolean): string {
+function renderDaySection(day: string, anime: AniListAnime[], isToday: boolean): string {
   const dayName = day.charAt(0).toUpperCase() + day.slice(1);
   const badge = isToday ? '<span class="ml-2 px-2 py-0.5 rounded-full bg-accent-pink text-white text-xs font-bold">Today</span>' : '';
 
@@ -44,7 +51,7 @@ function renderDaySection(day: string, anime: JikanScheduleEntry[], isToday: boo
           ${dayName}
           ${badge}
         </h3>
-        <p class="text-dark-400 text-sm">No anime airing today</p>
+        <p class="text-dark-400 text-sm">No scheduled broadcasts</p>
       </div>
     `;
   }

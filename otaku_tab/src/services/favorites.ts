@@ -16,9 +16,10 @@ class FavoritesService {
   async addFavorite(anime: FavoriteAnime): Promise<void> {
     try {
       const favorites = await this.getFavorites();
+      const animeId = anime.id || anime.mal_id;
       
       // Check if already exists
-      if (favorites.some(fav => fav.mal_id === anime.mal_id)) {
+      if (favorites.some(fav => (fav.id || fav.mal_id) === animeId)) {
         console.log('[Favorites] Anime already in favorites');
         return;
       }
@@ -36,28 +37,33 @@ class FavoritesService {
     }
   }
 
-  async removeFavorite(malId: number): Promise<void> {
+  async removeFavorite(animeId: number): Promise<void> {
     try {
       const favorites = await this.getFavorites();
-      const filtered = favorites.filter(fav => fav.mal_id !== malId);
+      const filtered = favorites.filter(fav => (fav.id || fav.mal_id) !== animeId);
       await chrome.storage.local.set({ [FAVORITES_KEY]: filtered });
-      console.log('[Favorites] Removed:', malId);
+      console.log('[Favorites] Removed:', animeId);
     } catch (error) {
       console.error('[Favorites] Failed to remove favorite:', error);
       throw error;
     }
   }
 
-  async isFavorite(malId: number): Promise<boolean> {
+  async isFavorite(animeId: number): Promise<boolean> {
     const favorites = await this.getFavorites();
-    return favorites.some(fav => fav.mal_id === malId);
+    return favorites.some(fav => (fav.id || fav.mal_id) === animeId);
   }
 
   async toggleFavorite(anime: FavoriteAnime): Promise<boolean> {
-    const isFav = await this.isFavorite(anime.mal_id);
+    const animeId = anime.id || anime.mal_id;
+    if (!animeId) {
+      throw new Error('Anime ID is required');
+    }
+    
+    const isFav = await this.isFavorite(animeId);
     
     if (isFav) {
-      await this.removeFavorite(anime.mal_id);
+      await this.removeFavorite(animeId);
       return false;
     } else {
       await this.addFavorite(anime);
@@ -67,27 +73,11 @@ class FavoritesService {
 
   async getFavoritesByDay(): Promise<Record<string, FavoriteAnime[]>> {
     const favorites = await this.getFavorites();
-    const byDay: Record<string, FavoriteAnime[]> = {
-      monday: [],
-      tuesday: [],
-      wednesday: [],
-      thursday: [],
-      friday: [],
-      saturday: [],
-      sunday: [],
-      unknown: [],
+    // Just return all favorites sorted by added date
+    // Day-based sorting is not applicable with AniList
+    return {
+      all: favorites.sort((a, b) => b.added_at - a.added_at),
     };
-
-    favorites.forEach(fav => {
-      const day = fav.broadcast_day?.toLowerCase() || 'unknown';
-      if (byDay[day]) {
-        byDay[day].push(fav);
-      } else {
-        byDay.unknown.push(fav);
-      }
-    });
-
-    return byDay;
   }
 }
 

@@ -1,4 +1,4 @@
-import { jikanAPI } from '../services/jikan';
+import { aniListAPI } from '../services/anilist';
 import { qs } from '../utils/dom';
 import { renderAnimeCard } from './AnimeCard';
 
@@ -10,7 +10,7 @@ export async function initBrowseView() {
   container.innerHTML = Array.from({ length: 24 }, () => '<div class="skeleton aspect-[2/3]"></div>').join('');
 
   try {
-    const anime = await jikanAPI.getCurrentSeason();
+    const anime = await aniListAPI.getCurrentSeason();
     container.innerHTML = anime.map((a) => renderAnimeCard(a)).join('');
   } catch (error) {
     console.error('[BrowseView] Failed to load anime:', error);

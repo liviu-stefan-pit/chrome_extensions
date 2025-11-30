@@ -1,4 +1,4 @@
-import { jikanAPI } from '../services/jikan';
+import { aniListAPI } from '../services/anilist';
 import { qs } from '../utils/dom';
 import { debounce } from '../utils/timing';
 import { getAnimeImage, getAnimeTitle, truncateText } from '../utils/anime';
@@ -20,7 +20,7 @@ export function initSearch() {
     searchResults.innerHTML = renderSearchLoading();
 
     try {
-      const results = await jikanAPI.searchAnime(query, 10);
+      const results = await aniListAPI.searchAnime(query, 10);
 
       if (results.length === 0) {
         searchResults.innerHTML = renderNoResults();
@@ -72,11 +72,11 @@ export function initSearch() {
 function renderSearchResult(anime: any): string {
   const imageUrl = getAnimeImage(anime);
   const title = truncateText(getAnimeTitle(anime), 50);
-  const type = anime.type || 'Unknown';
-  const score = anime.score ? anime.score.toFixed(1) : 'N/A';
+  const type = anime.format || 'Unknown';
+  const score = anime.averageScore ? anime.averageScore.toFixed(0) : 'N/A';
 
   return `
-    <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-dark-700/60 transition-colors group" data-anime-id="${anime.mal_id}">
+    <div class="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-dark-700/60 transition-colors group" data-anime-id="${anime.id}">
       <img 
         src="${imageUrl}" 
         alt="${title}"
@@ -87,7 +87,7 @@ function renderSearchResult(anime: any): string {
         <h4 class="text-sm font-semibold text-dark-50 mb-1 line-clamp-1 group-hover:text-primary-400 transition-colors">${title}</h4>
         <div class="flex items-center gap-2 text-xs text-dark-400">
           <span>${type}</span>
-          ${anime.score ? `<span>•</span><span class="text-accent-amber">⭐ ${score}</span>` : ''}
+          ${anime.averageScore ? `<span>•</span><span class="text-accent-amber">⭐ ${score}</span>` : ''}
         </div>
       </div>
       <svg class="w-5 h-5 text-dark-500 group-hover:text-primary-400 transition-colors flex-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">

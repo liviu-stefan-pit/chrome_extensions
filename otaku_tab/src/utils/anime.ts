@@ -1,35 +1,26 @@
-import type { JikanAnime, JikanScheduleEntry } from '../types/jikan';
+import type { AniListAnime } from '../types/anilist';
 
-export function getAnimeImage(anime: JikanAnime | JikanScheduleEntry): string {
+export function getAnimeImage(anime: AniListAnime): string {
   return (
-    anime.images?.jpg?.large_image_url ||
-    anime.images?.jpg?.image_url ||
-    anime.images?.webp?.large_image_url ||
-    anime.images?.webp?.image_url ||
+    anime.coverImage?.extraLarge ||
+    anime.coverImage?.large ||
+    anime.coverImage?.medium ||
     ''
   );
 }
 
-export function getAnimeTitle(anime: JikanAnime | JikanScheduleEntry): string {
-  return anime.title_english || anime.title || 'Unknown';
+export function getAnimeTitle(anime: AniListAnime): string {
+  return anime.title?.english || anime.title?.romaji || anime.title?.native || 'Unknown';
 }
 
 export function formatScore(score?: number): string {
   if (!score) return 'N/A';
-  return score.toFixed(2);
+  return score.toFixed(0);
 }
 
 export function formatEpisodes(episodes?: number): string {
   if (!episodes) return '?';
   return episodes.toString();
-}
-
-export function getBroadcastDay(anime: JikanScheduleEntry): string {
-  return anime.broadcast?.day || 'Unknown';
-}
-
-export function getBroadcastTime(anime: JikanScheduleEntry): string {
-  return anime.broadcast?.time || '??:??';
 }
 
 export function getDayOfWeek(): string {

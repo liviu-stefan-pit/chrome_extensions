@@ -7,6 +7,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   defaultView: 'schedule',
   enableAnimations: true,
   compactMode: false,
+  showAdultContent: false,
 };
 
 class PreferencesService {
