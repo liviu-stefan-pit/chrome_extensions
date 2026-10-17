@@ -1,5 +1,7 @@
 # Chrome Extensions Workspace
 
+`otaku_tab` is the current anime new-tab extension. The older `animeTab` copy lives in `_archive/animeTab`.
+
 This workspace contains a collection of Chrome extensions ranging from basic to advanced implementations. Each extension demonstrates different Chrome Extension APIs, development patterns, and use cases.
 
 ## 📁 Workspace Structure
